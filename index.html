@@ -1,13 +1,49 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aura · Banco de Freelancers</title>
+<title>Aura · Freelancers</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- ══ FIREBASE SDK ══ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getDatabase, ref, onValue, push, set, remove, update }
+    from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+  // ─────────────────────────────────────────────────────────────
+  // 🔧 COLE AQUI AS SUAS CONFIGURAÇÕES DO FIREBASE
+  // ─────────────────────────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDcWDrkW2ww-cFTV3xKWtkLai2mKiXNpP8",
+    authDomain:        "aura-freelancers-15511.firebaseapp.com",
+    databaseURL:       "https://aura-freelancers-15511-default-rtdb.firebaseio.com",
+    projectId:         "aura-freelancers-15511",
+    storageBucket:     "aura-freelancers-15511.firebasestorage.app",
+    messagingSenderId: "336489401396",
+    appId:             "1:336489401396:web:4974c3057d3561617ace61"
+  };
+  // ─────────────────────────────────────────────────────────────
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+  const dbRef = ref(db, 'freelancers');
+
+  window._fb = { db, ref, onValue, push, set, remove, update, dbRef };
+
+  // Ouvir mudanças em tempo real
+  onValue(dbRef, (snapshot) => {
+    const data = snapshot.val() || {};
+    window._freelancers = Object.entries(data).map(([id, v]) => ({ id, ...v }));
+    window._freelancers.sort((a,b) => (b.criadoEm||0) - (a.criadoEm||0));
+    if (window.render) window.render();
+  });
+</script>
+
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg: #0e0c0a;
     --surface: #171410;
@@ -19,311 +55,193 @@
     --text: #f0ead8;
     --text-muted: #8a7e6a;
     --text-dim: #5a5040;
-
     --cozinha: #c45c3a;
     --limpeza: #4a8fc4;
     --bartender: #9c6bb5;
     --cumim: #4aab7a;
     --garcom: #c4a43a;
   }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-  }
-
-  /* ── HEADER ── */
-  header {
+  /* SETUP BANNER */
+  #setupBanner {
+    background: linear-gradient(135deg, #1a1200, #2a1e00);
+    border-bottom: 1px solid var(--gold-dim);
+    padding: 14px 48px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 28px 48px;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: var(--gold-light);
+  }
+  #setupBanner strong { font-weight: 500; }
+  #setupBanner a { color: var(--gold); text-decoration: underline; }
+  .banner-icon { font-size: 1.1rem; }
+
+  /* HEADER */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 26px 48px;
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    background: rgba(14,12,10,0.92);
-    backdrop-filter: blur(12px);
+    position: sticky; top: 0;
+    background: rgba(14,12,10,0.94);
+    backdrop-filter: blur(14px);
     z-index: 100;
   }
+  .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 300; letter-spacing: 0.18em; color: var(--gold); }
+  .logo span { font-style: italic; color: var(--text-muted); font-size: 0.82rem; letter-spacing: 0.05em; display: block; margin-top: -4px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .sync-indicator { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-dim); }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #4aab7a; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-  .logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.9rem;
-    font-weight: 300;
-    letter-spacing: 0.18em;
-    color: var(--gold);
-  }
-  .logo span { font-style: italic; color: var(--text-muted); font-size: 0.85rem; letter-spacing: 0.05em; display: block; margin-top: -4px; }
-
-  .header-actions { display: flex; gap: 12px; }
-
-  /* ── BUTTONS ── */
-  .btn {
-    padding: 9px 20px;
-    border-radius: 3px;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
+  /* BUTTONS */
+  .btn { padding: 9px 20px; border-radius: 3px; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 400; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
   .btn-primary { background: var(--gold); color: #0e0c0a; }
   .btn-primary:hover { background: var(--gold-light); }
   .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
   .btn-ghost:hover { border-color: var(--gold-dim); color: var(--text); }
-  .btn-danger { background: transparent; color: #c45c3a; border: 1px solid #c45c3a44; font-size: 0.75rem; padding: 6px 12px; }
-  .btn-danger:hover { background: #c45c3a22; }
 
-  /* ── MAIN LAYOUT ── */
+  /* MAIN */
   main { max-width: 1280px; margin: 0 auto; padding: 40px 48px; }
 
-  /* ── STATS BAR ── */
-  .stats { display: flex; gap: 16px; margin-bottom: 40px; flex-wrap: wrap; }
-  .stat-card {
-    flex: 1; min-width: 130px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--area-color, var(--gold));
-  }
-  .stat-card .stat-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.2rem;
-    font-weight: 600;
-    color: var(--area-color, var(--gold));
-    line-height: 1;
-  }
-  .stat-card .stat-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 6px; }
+  /* STATS */
+  .stats { display: flex; gap: 14px; margin-bottom: 40px; flex-wrap: wrap; }
+  .stat-card { flex: 1; min-width: 120px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 18px 22px; position: relative; overflow: hidden; }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--area-color, var(--gold)); }
+  .stat-card .num { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 600; color: var(--area-color, var(--gold)); line-height: 1; }
+  .stat-card .lbl { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 5px; }
 
-  /* ── FILTER / SEARCH ── */
-  .toolbar { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; align-items: center; }
-
+  /* TOOLBAR */
+  .toolbar { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; align-items: center; }
   .search-wrap { position: relative; flex: 1; min-width: 220px; }
-  .search-wrap input {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 10px 16px 10px 40px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.88rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+  .search-wrap input { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 3px; padding: 10px 16px 10px 40px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
   .search-wrap input:focus { border-color: var(--gold-dim); }
   .search-wrap input::placeholder { color: var(--text-dim); }
-  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 1rem; pointer-events: none; }
-
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-dim); pointer-events: none; }
   .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-  .pill {
-    padding: 7px 16px;
-    border-radius: 50px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 0.78rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .pill { padding: 7px 16px; border-radius: 50px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
   .pill.active, .pill:hover { border-color: var(--pill-color, var(--gold)); color: var(--pill-color, var(--gold)); background: color-mix(in srgb, var(--pill-color, var(--gold)) 10%, transparent); }
 
-  /* ── GRID ── */
+  /* GRID */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 
-  /* ── FREELANCER CARD ── */
-  .f-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.25s, transform 0.2s;
-    animation: fadeUp 0.3s ease both;
-  }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  /* CARD */
+  .f-card { background: var(--card); border: 1px solid var(--border); border-radius: 5px; padding: 24px; position: relative; overflow: hidden; transition: border-color 0.25s, transform 0.2s; animation: fadeUp 0.3s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
   .f-card:hover { border-color: var(--area-color, var(--border)); transform: translateY(-2px); }
-
-  .f-card .area-stripe {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--area-color);
-  }
-
-  .f-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; padding-left: 12px; }
-  .f-name { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 400; color: var(--text); }
-  .f-area-badge {
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--area-color);
-    background: color-mix(in srgb, var(--area-color) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--area-color) 30%, transparent);
-    padding: 3px 10px;
-    border-radius: 50px;
-    white-space: nowrap;
-  }
-
-  .f-info { padding-left: 12px; display: flex; flex-direction: column; gap: 7px; }
+  .f-card .stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--area-color); }
+  .f-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; padding-left: 14px; }
+  .f-name { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 400; }
+  .f-badge { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--area-color); background: color-mix(in srgb, var(--area-color) 12%, transparent); border: 1px solid color-mix(in srgb, var(--area-color) 30%, transparent); padding: 3px 10px; border-radius: 50px; white-space: nowrap; }
+  .f-info { padding-left: 14px; display: flex; flex-direction: column; gap: 7px; }
   .f-row { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-muted); }
-  .f-row .icon { font-size: 0.9rem; width: 16px; text-align: center; }
-  .f-row a { color: var(--text-muted); text-decoration: none; }
-  .f-row a:hover { color: var(--gold); }
-
-  .f-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; padding-left: 12px; }
+  .f-row .ic { width: 16px; text-align: center; font-size: 0.9rem; }
+  .f-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; padding-left: 14px; }
   .f-tag { font-size: 0.7rem; padding: 2px 9px; border-radius: 3px; background: var(--surface); color: var(--text-dim); border: 1px solid var(--border); }
-
-  .f-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); padding-left: 12px; }
-  .f-avail { font-size: 0.75rem; display: flex; align-items: center; gap: 6px; }
+  .f-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); padding-left: 14px; }
+  .f-avail { font-size: 0.75rem; display: flex; align-items: center; gap: 6px; color: var(--text-muted); }
   .dot { width: 7px; height: 7px; border-radius: 50%; }
   .dot.yes { background: #4aab7a; }
-  .dot.no { background: #c45c3a; }
-
+  .dot.no  { background: #c45c3a; }
   .f-actions { display: flex; gap: 8px; }
   .btn-icon { background: transparent; border: 1px solid var(--border); border-radius: 3px; padding: 5px 10px; font-size: 0.82rem; cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
   .btn-icon:hover { border-color: var(--gold-dim); color: var(--gold); }
-  .btn-icon.danger:hover { border-color: #c45c3a44; color: #c45c3a; }
+  .btn-icon.danger:hover { border-color: #c45c3a55; color: #c45c3a; }
 
-  /* ── EMPTY STATE ── */
+  /* EMPTY / LOADING */
   .empty { text-align: center; padding: 80px 20px; color: var(--text-dim); }
   .empty .empty-icon { font-size: 3rem; margin-bottom: 16px; }
-  .empty p { font-size: 0.9rem; }
+  .loading { text-align: center; padding: 80px 20px; color: var(--text-dim); font-size: 0.9rem; }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── MODAL OVERLAY ── */
-  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  /* MODAL */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(5px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .overlay.open { opacity: 1; pointer-events: all; }
-
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    width: 100%;
-    max-width: 520px;
-    padding: 36px 40px;
-    transform: translateY(20px);
-    transition: transform 0.25s;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; width: 100%; max-width: 520px; padding: 36px 40px; transform: translateY(20px); transition: transform 0.25s; max-height: 90vh; overflow-y: auto; }
   .overlay.open .modal { transform: translateY(0); }
-
-  .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300; margin-bottom: 28px; color: var(--gold); }
-
-  .form-group { margin-bottom: 18px; }
-  .form-group label { display: block; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
-  .form-group input, .form-group select, .form-group textarea {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 10px 14px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.88rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+  .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300; margin-bottom: 26px; color: var(--gold); }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 0.73rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 3px; padding: 10px 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold-dim); }
   .form-group select option { background: var(--card); }
   .form-group textarea { resize: vertical; min-height: 70px; }
-
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
   .form-check { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; }
   .form-check input[type=checkbox] { accent-color: var(--gold); width: 15px; height: 15px; cursor: pointer; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 26px; }
 
-  .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 28px; }
-
-  /* ── WHATSAPP BTN ── */
-  .btn-whatsapp { background: #25d366; color: #fff; border: none; border-radius: 3px; padding: 6px 12px; font-size: 0.75rem; cursor: pointer; font-family: 'DM Sans', sans-serif; letter-spacing: 0.05em; transition: background 0.2s; }
-  .btn-whatsapp:hover { background: #20bb5a; }
-
-  /* ── AREA COLORS MAP ── */
+  /* AREA CLASSES */
   .area-cozinha   { --area-color: var(--cozinha); }
   .area-limpeza   { --area-color: var(--limpeza); }
   .area-bartender { --area-color: var(--bartender); }
   .area-cumim     { --area-color: var(--cumim); }
   .area-garcom    { --area-color: var(--garcom); }
-
   .pill-cozinha   { --pill-color: var(--cozinha); }
   .pill-limpeza   { --pill-color: var(--limpeza); }
   .pill-bartender { --pill-color: var(--bartender); }
   .pill-cumim     { --pill-color: var(--cumim); }
   .pill-garcom    { --pill-color: var(--garcom); }
 
-  /* scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
   @media (max-width: 640px) {
-    header { padding: 20px 24px; }
-    main { padding: 28px 24px; }
-    .modal { padding: 28px 24px; }
+    header { padding: 18px 20px; }
+    #setupBanner { padding: 12px 20px; font-size: 0.78rem; }
+    main { padding: 24px 20px; }
+    .modal { padding: 26px 20px; }
     .form-row { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
+<!-- BANNER de configuração (some após configurar) -->
+<div id="setupBanner">
+  <span class="banner-icon">⚙️</span>
+  <span><strong>Configure o Firebase:</strong> Abra o arquivo, encontre a seção <code>firebaseConfig</code> e cole suas credenciais. <a href="#" onclick="document.getElementById('setupBanner').style.display='none'">Fechar aviso</a></span>
+</div>
+
 <header>
   <div class="logo">AURA <span>banco de freelancers</span></div>
-  <div class="header-actions">
-    <button class="btn btn-ghost" onclick="exportData()">↓ Exportar</button>
-    <button class="btn btn-primary" onclick="openModal()">+ Novo Freelancer</button>
+  <div class="header-right">
+    <span class="sync-indicator"><span class="sync-dot"></span> Tempo real</span>
+    <button class="btn btn-ghost" onclick="exportCSV()">↓ Exportar</button>
+    <button class="btn btn-primary" onclick="openModal()">+ Novo</button>
   </div>
 </header>
 
 <main>
-  <!-- STATS -->
   <div class="stats" id="stats"></div>
 
-  <!-- TOOLBAR -->
   <div class="toolbar">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Buscar por nome, telefone..." oninput="render()">
+      <input type="text" id="searchInput" placeholder="Buscar por nome, habilidade…" oninput="render()">
     </div>
     <div class="filter-pills">
-      <button class="pill active" data-area="todos" style="--pill-color: var(--gold)" onclick="setFilter(this,'todos')">Todos</button>
-      <button class="pill pill-cozinha"   data-area="cozinha"   onclick="setFilter(this,'cozinha')">🍳 Cozinha</button>
-      <button class="pill pill-limpeza"   data-area="limpeza"   onclick="setFilter(this,'limpeza')">🧹 Limpeza</button>
-      <button class="pill pill-bartender" data-area="bartender" onclick="setFilter(this,'bartender')">🍸 Bartender</button>
-      <button class="pill pill-cumim"     data-area="cumim"     onclick="setFilter(this,'cumim')">🍽 Cumim</button>
-      <button class="pill pill-garcom"    data-area="garcom"    onclick="setFilter(this,'garcom')">🤵 Garçom</button>
+      <button class="pill active" style="--pill-color:var(--gold)" onclick="setFilter(this,'todos')">Todos</button>
+      <button class="pill pill-cozinha"   onclick="setFilter(this,'cozinha')">🍳 Cozinha</button>
+      <button class="pill pill-limpeza"   onclick="setFilter(this,'limpeza')">🧹 Limpeza</button>
+      <button class="pill pill-bartender" onclick="setFilter(this,'bartender')">🍸 Bartender</button>
+      <button class="pill pill-cumim"     onclick="setFilter(this,'cumim')">🍽 Cumim</button>
+      <button class="pill pill-garcom"    onclick="setFilter(this,'garcom')">🤵 Garçom</button>
+      <button class="pill" style="--pill-color:#4aab7a" onclick="setFilter(this,'disponiveis')">✅ Disponíveis</button>
     </div>
   </div>
 
-  <!-- GRID -->
-  <div class="grid" id="grid"></div>
-  <div class="empty" id="empty" style="display:none">
-    <div class="empty-icon">🔎</div>
-    <p>Nenhum freelancer encontrado.</p>
-  </div>
+  <div id="loadingState" class="loading"><div class="spinner"></div><br>Conectando ao banco de dados…</div>
+  <div class="grid" id="grid" style="display:none"></div>
+  <div class="empty" id="empty" style="display:none"><div class="empty-icon">🔎</div><p>Nenhum freelancer encontrado.</p></div>
 </main>
 
 <!-- MODAL -->
-<div class="overlay" id="overlay" onclick="closeModalOutside(event)">
-  <div class="modal" id="modal">
+<div class="overlay" id="overlay" onclick="closeOutside(event)">
+  <div class="modal">
     <div class="modal-title" id="modalTitle">Novo Freelancer</div>
     <div class="form-row">
       <div class="form-group">
@@ -345,7 +263,7 @@
     <div class="form-row">
       <div class="form-group">
         <label>Telefone / WhatsApp *</label>
-        <input type="text" id="f_tel" placeholder="(44) 99999-9999">
+        <input type="text" id="f_tel" placeholder="(38) 99999-9999">
       </div>
       <div class="form-group">
         <label>Valor por diária (R$)</label>
@@ -382,111 +300,101 @@
     </label>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveFreelancer()">Salvar</button>
+      <button class="btn btn-primary" id="saveBtn" onclick="saveFreelancer()">Salvar</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── DATA ─────────────────────────────────────────────────────
 const AREAS = {
-  cozinha:   { label: 'Cozinha',   icon: '🍳', color: '#c45c3a' },
-  limpeza:   { label: 'Limpeza',   icon: '🧹', color: '#4a8fc4' },
-  bartender: { label: 'Bartender', icon: '🍸', color: '#9c6bb5' },
-  cumim:     { label: 'Cumim',     icon: '🍽',  color: '#4aab7a' },
-  garcom:    { label: 'Garçom',    icon: '🤵', color: '#c4a43a' },
+  cozinha:   { label:'Cozinha',   icon:'🍳', color:'#c45c3a' },
+  limpeza:   { label:'Limpeza',   icon:'🧹', color:'#4a8fc4' },
+  bartender: { label:'Bartender', icon:'🍸', color:'#9c6bb5' },
+  cumim:     { label:'Cumim',     icon:'🍽', color:'#4aab7a' },
+  garcom:    { label:'Garçom',    icon:'🤵', color:'#c4a43a' },
 };
 
-let freelancers = JSON.parse(localStorage.getItem('aura_freelancers') || '[]');
+window._freelancers = [];
 let currentFilter = 'todos';
 let editingId = null;
-
-// Seed demo data if empty
-if (freelancers.length === 0) {
-  freelancers = [
-    { id: uid(), nome: 'Carlos Eduardo', area: 'garcom', tel: '(38) 99123-4567', valor: '180,00', cidade: 'Montes Claros', exp: 'Experiente', tags: ['eventos', 'fine dining'], obs: 'Pontual, já trabalhou em casamentos.', disp: true },
-    { id: uid(), nome: 'Patrícia Souza', area: 'cozinha', tel: '(38) 98765-1234', valor: '160,00', cidade: 'Montes Claros', exp: 'Intermediário', tags: ['confeitaria', 'quente/frio'], obs: 'Excelente em pratos quentes.', disp: true },
-    { id: uid(), nome: 'Rafael Moura',   area: 'bartender', tel: '(38) 99876-5432', valor: '220,00', cidade: 'Janaúba', exp: 'Especialista', tags: ['coquetelaria', 'flair', 'drinks'], obs: 'Tem equipamentos próprios.', disp: false },
-    { id: uid(), nome: 'Lúcia Ferreira', area: 'limpeza', tel: '(38) 99321-6543', valor: '120,00', cidade: 'Montes Claros', exp: 'Experiente', tags: ['pós-evento', 'cozinha'], obs: '', disp: true },
-    { id: uid(), nome: 'Diego Lima',     area: 'cumim', tel: '(38) 99654-3210', valor: '140,00', cidade: 'Montes Claros', exp: 'Iniciante', tags: ['rápido', 'atencioso'], obs: 'Disponível a partir das 16h.', disp: true },
-  ];
-  save();
-}
-
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
-function save() { localStorage.setItem('aura_freelancers', JSON.stringify(freelancers)); }
+let dataLoaded = false;
 
 // ── RENDER ────────────────────────────────────────────────────
-function render() {
-  const search = document.getElementById('searchInput').value.toLowerCase();
-  let list = freelancers.filter(f => {
-    const matchArea = currentFilter === 'todos' || f.area === currentFilter;
-    const matchSearch = !search || f.nome.toLowerCase().includes(search) || f.tel.includes(search) || (f.tags||[]).some(t=>t.toLowerCase().includes(search));
-    return matchArea && matchSearch;
+window.render = function() {
+  if (!dataLoaded) {
+    dataLoaded = true;
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('grid').style.display = 'grid';
+  }
+
+  const search = (document.getElementById('searchInput').value||'').toLowerCase();
+  let list = window._freelancers.filter(f => {
+    if (currentFilter === 'disponiveis') return f.disp;
+    if (currentFilter !== 'todos' && f.area !== currentFilter) return false;
+    if (search) return f.nome.toLowerCase().includes(search)
+      || f.tel.includes(search)
+      || (f.tags||[]).some(t => t.toLowerCase().includes(search))
+      || (f.cidade||'').toLowerCase().includes(search);
+    return true;
   });
 
   renderStats();
 
-  const grid = document.getElementById('grid');
+  const grid  = document.getElementById('grid');
   const empty = document.getElementById('empty');
 
   if (list.length === 0) { grid.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display = 'none';
 
   grid.innerHTML = list.map((f, i) => {
-    const area = AREAS[f.area] || {};
+    const a = AREAS[f.area] || {};
     const tags = (f.tags||[]).map(t=>`<span class="f-tag">${t}</span>`).join('');
-    const waNum = f.tel.replace(/\D/g,'');
+    const waNum = (f.tel||'').replace(/\D/g,'');
     return `
-    <div class="f-card area-${f.area}" style="animation-delay:${i*40}ms">
-      <div class="area-stripe"></div>
+    <div class="f-card area-${f.area}" style="animation-delay:${i*35}ms">
+      <div class="stripe"></div>
       <div class="f-card-header">
-        <div>
-          <div class="f-name">${f.nome}</div>
-        </div>
-        <span class="f-area-badge">${area.icon} ${area.label}</span>
+        <div class="f-name">${f.nome}</div>
+        <span class="f-badge">${a.icon||''} ${a.label||f.area}</span>
       </div>
       <div class="f-info">
-        <div class="f-row"><span class="icon">📞</span> ${f.tel}</div>
-        ${f.valor ? `<div class="f-row"><span class="icon">💰</span> R$ ${f.valor}/diária</div>` : ''}
-        ${f.cidade ? `<div class="f-row"><span class="icon">📍</span> ${f.cidade}</div>` : ''}
-        ${f.exp ? `<div class="f-row"><span class="icon">⭐</span> ${f.exp}</div>` : ''}
-        ${f.obs ? `<div class="f-row"><span class="icon">📝</span> <em style="color:var(--text-dim);font-size:.8rem">${f.obs}</em></div>` : ''}
+        <div class="f-row"><span class="ic">📞</span>${f.tel}</div>
+        ${f.valor  ? `<div class="f-row"><span class="ic">💰</span>R$ ${f.valor}/diária</div>` : ''}
+        ${f.cidade ? `<div class="f-row"><span class="ic">📍</span>${f.cidade}</div>` : ''}
+        ${f.exp    ? `<div class="f-row"><span class="ic">⭐</span>${f.exp}</div>` : ''}
+        ${f.obs    ? `<div class="f-row"><span class="ic">📝</span><em style="color:var(--text-dim);font-size:.78rem">${f.obs}</em></div>` : ''}
       </div>
       ${tags ? `<div class="f-tags">${tags}</div>` : ''}
       <div class="f-footer">
         <div class="f-avail">
           <span class="dot ${f.disp?'yes':'no'}"></span>
-          <span style="color:var(--text-muted);font-size:.75rem">${f.disp?'Disponível fim de sem.':'Indisponível'}</span>
+          ${f.disp ? 'Disponível FDS' : 'Indisponível'}
         </div>
         <div class="f-actions">
-          <button class="btn-icon" title="WhatsApp" onclick="openWA('${waNum}','${f.nome}','${area.label}')">💬</button>
-          <button class="btn-icon" title="Editar" onclick="editFreelancer('${f.id}')">✏️</button>
-          <button class="btn-icon danger" title="Remover" onclick="deleteFreelancer('${f.id}')">🗑</button>
+          <button class="btn-icon" title="WhatsApp" onclick="openWA('${waNum}','${f.nome}','${a.label||f.area}')">💬</button>
+          <button class="btn-icon" title="Editar"   onclick="openModal('${f.id}')">✏️</button>
+          <button class="btn-icon danger" title="Remover" onclick="deleteF('${f.id}','${f.nome}')">🗑</button>
         </div>
       </div>
     </div>`;
   }).join('');
-}
+};
 
 function renderStats() {
-  const el = document.getElementById('stats');
-  const total = { label: 'Total', count: freelancers.length, color: 'var(--gold)' };
-  const areas = Object.entries(AREAS).map(([k,v]) => ({
-    label: v.icon+' '+v.label,
-    count: freelancers.filter(f=>f.area===k).length,
-    color: v.color
-  }));
-  const disp = { label: '✅ Disponíveis', count: freelancers.filter(f=>f.disp).length, color: '#4aab7a' };
-  const cards = [total, ...areas, disp];
-  el.innerHTML = cards.map(c=>`
+  const all = window._freelancers;
+  const cards = [
+    { label:'Total', count: all.length, color:'var(--gold)' },
+    ...Object.entries(AREAS).map(([k,v])=>({ label:`${v.icon} ${v.label}`, count: all.filter(f=>f.area===k).length, color: v.color })),
+    { label:'✅ Disponíveis', count: all.filter(f=>f.disp).length, color:'#4aab7a' },
+  ];
+  document.getElementById('stats').innerHTML = cards.map(c=>`
     <div class="stat-card" style="--area-color:${c.color}">
-      <div class="stat-num">${c.count}</div>
-      <div class="stat-label">${c.label}</div>
+      <div class="num">${c.count}</div>
+      <div class="lbl">${c.label}</div>
     </div>`).join('');
 }
 
-// ── FILTERS ───────────────────────────────────────────────────
+// ── FILTER ────────────────────────────────────────────────────
 function setFilter(el, area) {
   document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
@@ -494,63 +402,76 @@ function setFilter(el, area) {
   render();
 }
 
-// ── MODAL ────────────────────────────────────────────────────
+// ── MODAL ─────────────────────────────────────────────────────
 function openModal(id=null) {
   editingId = id;
-  const overlay = document.getElementById('overlay');
   document.getElementById('modalTitle').textContent = id ? 'Editar Freelancer' : 'Novo Freelancer';
   if (id) {
-    const f = freelancers.find(x=>x.id===id);
-    document.getElementById('f_nome').value = f.nome;
-    document.getElementById('f_area').value = f.area;
-    document.getElementById('f_tel').value = f.tel;
-    document.getElementById('f_valor').value = f.valor||'';
-    document.getElementById('f_cidade').value = f.cidade||'';
-    document.getElementById('f_exp').value = f.exp||'';
-    document.getElementById('f_tags').value = (f.tags||[]).join(', ');
-    document.getElementById('f_obs').value = f.obs||'';
-    document.getElementById('f_disp').checked = f.disp;
+    const f = window._freelancers.find(x=>x.id===id);
+    if (f) {
+      document.getElementById('f_nome').value  = f.nome||'';
+      document.getElementById('f_area').value  = f.area||'';
+      document.getElementById('f_tel').value   = f.tel||'';
+      document.getElementById('f_valor').value = f.valor||'';
+      document.getElementById('f_cidade').value= f.cidade||'';
+      document.getElementById('f_exp').value   = f.exp||'';
+      document.getElementById('f_tags').value  = (f.tags||[]).join(', ');
+      document.getElementById('f_obs').value   = f.obs||'';
+      document.getElementById('f_disp').checked= !!f.disp;
+    }
   } else {
-    ['f_nome','f_area','f_tel','f_valor','f_cidade','f_exp','f_tags','f_obs'].forEach(id=>document.getElementById(id).value='');
+    ['f_nome','f_area','f_tel','f_valor','f_cidade','f_exp','f_tags','f_obs'].forEach(id=>{ document.getElementById(id).value=''; });
     document.getElementById('f_disp').checked = true;
   }
-  overlay.classList.add('open');
+  document.getElementById('overlay').classList.add('open');
 }
-
 function closeModal() { document.getElementById('overlay').classList.remove('open'); editingId=null; }
-function closeModalOutside(e) { if(e.target===document.getElementById('overlay')) closeModal(); }
+function closeOutside(e) { if(e.target===document.getElementById('overlay')) closeModal(); }
 
-function editFreelancer(id) { openModal(id); }
-
-function saveFreelancer() {
+// ── SAVE ──────────────────────────────────────────────────────
+async function saveFreelancer() {
   const nome = document.getElementById('f_nome').value.trim();
   const area = document.getElementById('f_area').value;
   const tel  = document.getElementById('f_tel').value.trim();
-  if (!nome || !area || !tel) { alert('Preencha nome, área e telefone.'); return; }
+  if (!nome||!area||!tel) { alert('Preencha nome, área e telefone.'); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = 'Salvando…'; btn.disabled = true;
 
   const data = {
-    id: editingId || uid(),
     nome, area, tel,
-    valor: document.getElementById('f_valor').value.trim(),
+    valor:  document.getElementById('f_valor').value.trim(),
     cidade: document.getElementById('f_cidade').value.trim(),
-    exp: document.getElementById('f_exp').value,
-    tags: document.getElementById('f_tags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    obs: document.getElementById('f_obs').value.trim(),
-    disp: document.getElementById('f_disp').checked,
+    exp:    document.getElementById('f_exp').value,
+    tags:   document.getElementById('f_tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    obs:    document.getElementById('f_obs').value.trim(),
+    disp:   document.getElementById('f_disp').checked,
+    criadoEm: editingId
+      ? (window._freelancers.find(x=>x.id===editingId)?.criadoEm || Date.now())
+      : Date.now(),
   };
 
-  if (editingId) {
-    freelancers = freelancers.map(f=>f.id===editingId?data:f);
-  } else {
-    freelancers.unshift(data);
+  try {
+    const { db, ref, set, push, dbRef } = window._fb;
+    if (editingId) {
+      await set(ref(db, `freelancers/${editingId}`), data);
+    } else {
+      await push(dbRef, data);
+    }
+    closeModal();
+  } catch(e) {
+    alert('Erro ao salvar. Verifique a configuração do Firebase.');
+    console.error(e);
+  } finally {
+    btn.textContent = 'Salvar'; btn.disabled = false;
   }
-  save(); closeModal(); render();
 }
 
-function deleteFreelancer(id) {
-  if (!confirm('Remover este freelancer?')) return;
-  freelancers = freelancers.filter(f=>f.id!==id);
-  save(); render();
+// ── DELETE ────────────────────────────────────────────────────
+async function deleteF(id, nome) {
+  if (!confirm(`Remover ${nome}?`)) return;
+  const { db, ref, remove } = window._fb;
+  await remove(ref(db, `freelancers/${id}`));
 }
 
 // ── WHATSAPP ──────────────────────────────────────────────────
@@ -559,10 +480,10 @@ function openWA(num, nome, area) {
   window.open(`https://wa.me/55${num}?text=${msg}`, '_blank');
 }
 
-// ── EXPORT ────────────────────────────────────────────────────
-function exportData() {
+// ── EXPORT CSV ────────────────────────────────────────────────
+function exportCSV() {
   const rows = [['Nome','Área','Telefone','Valor/Diária','Cidade','Experiência','Tags','Observações','Disponível FDS']];
-  freelancers.forEach(f=>{
+  window._freelancers.forEach(f=>{
     rows.push([f.nome, AREAS[f.area]?.label||f.area, f.tel, f.valor, f.cidade, f.exp, (f.tags||[]).join('; '), f.obs, f.disp?'Sim':'Não']);
   });
   const csv = rows.map(r=>r.map(c=>`"${(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
@@ -572,8 +493,12 @@ function exportData() {
   a.click();
 }
 
-// ── INIT ──────────────────────────────────────────────────────
-render();
+// Timeout de loading
+setTimeout(()=>{
+  if (!dataLoaded) {
+    document.getElementById('loadingState').innerHTML = '<div style="font-size:1.5rem;margin-bottom:12px">⚠️</div>Não foi possível conectar ao Firebase.<br><small style="color:var(--text-dim)">Verifique se as credenciais foram configuradas corretamente.</small>';
+  }
+}, 8000);
 </script>
 </body>
 </html>
