@@ -10,282 +10,260 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getDatabase, ref, onValue, push, set, remove }
     from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-
   const firebaseConfig = {
-    apiKey:            "AIzaSyDcWDrkW2ww-cFTV3xKWtkLai2mKiXNpP8",
-    authDomain:        "aura-freelancers-15511.firebaseapp.com",
-    databaseURL:       "https://aura-freelancers-15511-default-rtdb.firebaseio.com",
-    projectId:         "aura-freelancers-15511",
-    storageBucket:     "aura-freelancers-15511.firebasestorage.app",
-    messagingSenderId: "336489401396",
-    appId:             "1:336489401396:web:4974c3057d3561617ace61"
+    apiKey:"AIzaSyDcWDrkW2ww-cFTV3xKWtkLai2mKiXNpP8",
+    authDomain:"aura-freelancers-15511.firebaseapp.com",
+    databaseURL:"https://aura-freelancers-15511-default-rtdb.firebaseio.com",
+    projectId:"aura-freelancers-15511",
+    storageBucket:"aura-freelancers-15511.firebasestorage.app",
+    messagingSenderId:"336489401396",
+    appId:"1:336489401396:web:4974c3057d3561617ace61"
   };
-
-  const app = initializeApp(firebaseConfig);
-  const db  = getDatabase(app);
-  const dbRef    = ref(db, 'freelancers');
-  const escalaRef= ref(db, 'escalas');
-
-  window._fb = { db, ref, onValue, push, set, remove, dbRef, escalaRef };
-
-  onValue(dbRef, (snap) => {
-    const data = snap.val() || {};
-    window._freelancers = Object.entries(data).map(([id,v])=>({id,...v}));
+  const app=initializeApp(firebaseConfig);
+  const db=getDatabase(app);
+  const dbRef=ref(db,'freelancers');
+  const escalaRef=ref(db,'escalas');
+  window._fb={db,ref,onValue,push,set,remove,dbRef,escalaRef};
+  onValue(dbRef,(snap)=>{
+    const data=snap.val()||{};
+    window._freelancers=Object.entries(data).map(([id,v])=>({id,...v}));
     window._freelancers.sort((a,b)=>(b.criadoEm||0)-(a.criadoEm||0));
-    if (window.render) window.render();
+    if(window.render) window.render();
   });
-
-  onValue(escalaRef, (snap) => {
-    const data = snap.val() || {};
-    window._escalas = Object.entries(data).map(([id,v])=>({id,...v}));
-    window._escalas.sort((a,b)=> (b.dataInicio||'').localeCompare(a.dataInicio||''));
-    if (window.renderEscala) window.renderEscala();
+  onValue(escalaRef,(snap)=>{
+    const data=snap.val()||{};
+    window._escalas=Object.entries(data).map(([id,v])=>({id,...v}));
+    window._escalas.sort((a,b)=>(b.dataInicio||'').localeCompare(a.dataInicio||''));
+    if(window.renderEscala) window.renderEscala();
   });
 </script>
 
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --gold:       #b07d2a;
-  --gold-light: #c9913a;
-  --gold-pale:  #6a4010;
-  --gold-dim:   #b07d2a;
-  --bg:         #f5efe2;
-  --bg2:        #ede6d4;
-  --card:       #ffffff;
-  --card2:      #f9f4eb;
-  --border:     rgba(160,100,30,0.28);
-  --border2:    rgba(160,100,30,0.16);
-  --text:       #28200e;
-  --text-sub:   #4a3418;
-  --text-dim:   #7a5828;
-  --verde:      #167a50;
-  --vermelho:   #a02020;
-  --cozinha:    #b04020;
-  --limpeza:    #1e6ea0;
-  --bartender:  #9a7018;
-  --cumim:      #167a50;
-  --garcom:     #6a1ea0;
-  --seguranca:  #a02020;
-  --producao:   #1e58a0;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#b07d2a;--gold-light:#c9913a;--gold-dim:#b07d2a;
+  --bg:#f5efe2;--bg2:#ede6d4;--card:#ffffff;--card2:#f9f4eb;
+  --border:rgba(160,100,30,0.28);--border2:rgba(160,100,30,0.16);
+  --text:#28200e;--text-sub:#4a3418;--text-dim:#7a5828;
+  --verde:#167a50;--vermelho:#a02020;--laranja:#c9913a;
+  --cozinha:#b04020;--limpeza:#1e6ea0;--bartender:#9a7018;
+  --cumim:#167a50;--garcom:#6a1ea0;--seguranca:#a02020;--producao:#1e58a0;
 }
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:400;min-height:100vh;overflow-x:hidden}
 
-body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:400; min-height:100vh; overflow-x:hidden; }
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:rgba(245,239,226,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border2)}
+.header-inner{max-width:1360px;margin:0 auto;padding:0 48px;height:70px;display:flex;align-items:center;justify-content:space-between}
+.logo-wrap{display:flex;align-items:center;gap:14px}
+.logo-text{font-family:'Outfit',sans-serif;font-weight:400;font-size:1.45rem;letter-spacing:0.25em;color:var(--gold);text-transform:uppercase}
+.logo-sub{font-family:'Outfit',sans-serif;font-weight:500;font-size:0.75rem;letter-spacing:0.06em;color:var(--text-dim);text-transform:uppercase;display:block;margin-top:-2px}
+.header-right{display:flex;align-items:center;gap:14px}
+.live-badge{display:flex;align-items:center;gap:7px;font-size:0.78rem;color:var(--text-dim)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#167a50;box-shadow:0 0 8px #167a5088;animation:lp 2s infinite}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ── HEADER ── */
-header { position:sticky; top:0; z-index:100; background:rgba(245,239,226,0.97); backdrop-filter:blur(20px); border-bottom:1px solid var(--border2); }
-.header-inner { max-width:1360px; margin:0 auto; padding:0 48px; height:70px; display:flex; align-items:center; justify-content:space-between; }
-.logo-wrap { display:flex; align-items:center; gap:14px; }
-.logo-icon svg { width:30px; height:27px; }
-.logo-text { font-family:'Outfit',sans-serif; font-weight:400; font-size:1.45rem; letter-spacing:0.25em; color:var(--gold); text-transform:uppercase; }
-.logo-sub { font-family:'Outfit',sans-serif; font-weight:500; font-size:0.75rem; letter-spacing:0.06em; color:var(--text-dim); text-transform:uppercase; display:block; margin-top:-2px; }
-.header-right { display:flex; align-items:center; gap:14px; }
-.live-badge { display:flex; align-items:center; gap:7px; font-size:0.78rem; color:var(--text-dim); }
-.live-dot { width:6px; height:6px; border-radius:50%; background:#167a50; box-shadow:0 0 8px #167a5088; animation:lp 2s infinite; }
-@keyframes lp { 0%,100%{opacity:1} 50%{opacity:.3} }
+/* TABS */
+.tabs-bar{background:rgba(245,239,226,0.97);border-bottom:1px solid var(--border2)}
+.tabs-inner{max-width:1360px;margin:0 auto;padding:0 48px;display:flex}
+.tab-btn{font-family:'Outfit',sans-serif;font-weight:500;font-size:0.82rem;letter-spacing:0.06em;text-transform:uppercase;padding:14px 24px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s}
+.tab-btn:hover{color:var(--gold)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
 
-/* ── TABS ── */
-.tabs-bar { background:rgba(245,239,226,0.97); border-bottom:1px solid var(--border2); }
-.tabs-inner { max-width:1360px; margin:0 auto; padding:0 48px; display:flex; gap:0; }
-.tab-btn {
-  font-family:'Outfit',sans-serif; font-weight:500; font-size:0.82rem;
-  letter-spacing:0.06em; text-transform:uppercase;
-  padding:14px 24px; border:none; background:transparent;
-  color:var(--text-dim); cursor:pointer;
-  border-bottom:2px solid transparent; margin-bottom:-1px;
-  transition:all 0.2s;
-}
-.tab-btn:hover { color:var(--gold); }
-.tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+/* BUTTONS */
+.btn{font-family:'Outfit',sans-serif;font-weight:500;font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase;padding:10px 22px;border:none;border-radius:4px;cursor:pointer;transition:all 0.22s}
+.btn-gold{background:var(--gold);color:#fff}.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--text-sub);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn-green{background:var(--verde);color:#fff}.btn-green:hover{background:#1e9060}
+.btn-sm{padding:7px 14px;font-size:0.72rem}
 
-/* ── BUTTONS ── */
-.btn { font-family:'Outfit',sans-serif; font-weight:500; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; padding:10px 22px; border:none; border-radius:4px; cursor:pointer; transition:all 0.22s; }
-.btn-gold { background:var(--gold); color:#fff; }
-.btn-gold:hover { background:var(--gold-light); }
-.btn-outline { background:transparent; color:var(--text-sub); border:1px solid var(--border); }
-.btn-outline:hover { border-color:var(--gold-dim); color:var(--gold); }
-.btn-sm { padding:7px 14px; font-size:0.72rem; }
-.btn-green { background:var(--verde); color:#fff; }
-.btn-green:hover { background:#1e9060; }
+/* MAIN */
+main{max-width:1360px;margin:0 auto;padding:40px 48px}
+.tab-panel{display:none}.tab-panel.active{display:block}
 
-/* ── MAIN ── */
-main { max-width:1360px; margin:0 auto; padding:40px 48px; }
-.tab-panel { display:none; }
-.tab-panel.active { display:block; }
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:32px}
+.stat{background:var(--card);border:1px solid var(--border2);border-top:2px solid var(--ac,var(--gold-dim));border-radius:6px;padding:16px 18px}
+.stat-n{font-family:'Outfit',sans-serif;font-weight:600;font-size:2rem;color:var(--ac,var(--gold));line-height:1}
+.stat-l{font-size:0.72rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-dim);margin-top:5px}
 
-.page-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; padding-bottom:20px; border-bottom:1px solid var(--border2); }
-.page-title { font-family:'Outfit',sans-serif; font-weight:600; font-size:1.5rem; color:var(--gold); }
-.page-sub { font-size:0.8rem; color:var(--text-dim); margin-top:2px; }
+/* TOOLBAR */
+.toolbar{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;align-items:center}
+.search-box{position:relative;flex:1;min-width:240px}
+.search-box input{width:100%;background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:11px 16px 11px 42px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s}
+.search-box input:focus{border-color:var(--gold-dim)}.search-box input::placeholder{color:var(--text-dim)}
+.si{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:1rem;pointer-events:none}
+.pills{display:flex;gap:7px;flex-wrap:wrap}
+.pill{font-family:'Outfit',sans-serif;font-weight:500;font-size:0.75rem;letter-spacing:0.04em;text-transform:uppercase;padding:7px 15px;border-radius:50px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.2s}
+.pill:hover,.pill.active{border-color:var(--pc,var(--gold));color:var(--pc,var(--gold));background:color-mix(in srgb,var(--pc,var(--gold)) 8%,transparent)}
 
-/* ── STATS ── */
-.stats { display:grid; grid-template-columns:repeat(auto-fill, minmax(120px,1fr)); gap:10px; margin-bottom:32px; }
-.stat { background:var(--card); border:1px solid var(--border2); border-top:2px solid var(--ac,var(--gold-dim)); border-radius:6px; padding:16px 18px; }
-.stat-n { font-family:'Outfit',sans-serif; font-weight:600; font-size:2rem; color:var(--ac,var(--gold)); line-height:1; }
-.stat-l { font-size:0.72rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-dim); margin-top:5px; }
+/* FREELANCER GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px}
+.fcard{background:var(--card);border:1px solid var(--border2);border-radius:8px;overflow:hidden;transition:border-color 0.3s,transform 0.25s,box-shadow 0.3s;animation:up 0.35s ease both}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fcard:hover{border-color:color-mix(in srgb,var(--ac) 40%,transparent);transform:translateY(-2px);box-shadow:0 6px 24px rgba(160,100,30,0.12)}
+.fcard-bar{height:3px;background:linear-gradient(90deg,var(--ac),transparent 80%)}
+.fcard-body{padding:20px 22px}
+.fcard-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.fcard-name{font-family:'Outfit',sans-serif;font-weight:600;font-size:1rem}
+.fcard-badge{font-family:'Outfit',sans-serif;font-size:0.68rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 32%,transparent);background:color-mix(in srgb,var(--ac) 10%,transparent);padding:4px 11px;border-radius:50px;white-space:nowrap}
+.fcard-info{display:flex;flex-direction:column;gap:7px}
+.frow{display:flex;align-items:center;gap:9px;font-size:0.83rem;color:var(--text-sub)}
+.frow .ic{width:16px;text-align:center;font-size:0.85rem;flex-shrink:0}
+.stars{display:flex;gap:2px;margin-top:4px}
+.star{font-size:0.8rem;color:#ddd}.star.on{color:#c9913a}
+.fcard-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
+.ftag{font-size:0.68rem;padding:3px 9px;border-radius:4px;background:var(--bg2);color:var(--text-dim);border:1px solid var(--border2)}
+.fcard-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 22px;border-top:1px solid var(--border2);background:var(--bg2)}
+.favail{display:flex;align-items:center;gap:7px;font-size:0.75rem;color:var(--text-dim);font-weight:500}
+.adot{width:7px;height:7px;border-radius:50%}
+.adot.yes{background:#167a50;box-shadow:0 0 6px #167a5066}.adot.no{background:#a02020}
+.factions{display:flex;gap:7px}
+.ibtn{background:transparent;border:1px solid var(--border2);border-radius:4px;padding:6px 11px;font-size:0.82rem;cursor:pointer;color:var(--text-dim);transition:all 0.2s}
+.ibtn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.ibtn.del:hover{border-color:rgba(160,32,32,0.4);color:#a02020}
+.ibtn.wa:hover{border-color:rgba(22,122,80,0.4);color:#167a50}
 
-/* ── TOOLBAR ── */
-.toolbar { display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; align-items:center; }
-.search-box { position:relative; flex:1; min-width:240px; }
-.search-box input { width:100%; background:var(--card); border:1px solid var(--border2); border-radius:6px; padding:11px 16px 11px 42px; color:var(--text); font-family:'DM Sans',sans-serif; font-weight:400; font-size:0.88rem; outline:none; transition:border-color 0.2s; }
-.search-box input:focus { border-color:var(--gold-dim); }
-.search-box input::placeholder { color:var(--text-dim); }
-.si { position:absolute; left:15px; top:50%; transform:translateY(-50%); color:var(--text-dim); font-size:1rem; pointer-events:none; }
-.pills { display:flex; gap:7px; flex-wrap:wrap; }
-.pill { font-family:'Outfit',sans-serif; font-weight:500; font-size:0.75rem; letter-spacing:0.04em; text-transform:uppercase; padding:7px 15px; border-radius:50px; border:1px solid var(--border2); background:transparent; color:var(--text-dim); cursor:pointer; transition:all 0.2s; }
-.pill:hover,.pill.active { border-color:var(--pc,var(--gold)); color:var(--pc,var(--gold)); background:color-mix(in srgb,var(--pc,var(--gold)) 8%,transparent); }
+/* EMPTY / LOADING */
+.empty,.loading{text-align:center;padding:80px 20px;color:var(--text-dim)}
+.anim-tri{width:40px;height:36px;margin:0 auto 18px}
+.empty p,.loading p{font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;margin-top:12px}
 
-/* ── FREELANCER GRID ── */
-.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(310px,1fr)); gap:12px; }
-.fcard { background:var(--card); border:1px solid var(--border2); border-radius:8px; overflow:hidden; transition:border-color 0.3s,transform 0.25s,box-shadow 0.3s; animation:up 0.35s ease both; }
-@keyframes up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.fcard:hover { border-color:color-mix(in srgb,var(--ac) 40%,transparent); transform:translateY(-2px); box-shadow:0 6px 24px rgba(160,100,30,0.12); }
-.fcard-bar { height:3px; background:linear-gradient(90deg,var(--ac),transparent 80%); }
-.fcard-body { padding:20px 22px; }
-.fcard-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
-.fcard-name { font-family:'Outfit',sans-serif; font-weight:600; font-size:1rem; }
-.fcard-badge { font-family:'Outfit',sans-serif; font-size:0.68rem; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; color:var(--ac); border:1px solid color-mix(in srgb,var(--ac) 32%,transparent); background:color-mix(in srgb,var(--ac) 10%,transparent); padding:4px 11px; border-radius:50px; white-space:nowrap; }
-.fcard-info { display:flex; flex-direction:column; gap:7px; }
-.frow { display:flex; align-items:center; gap:9px; font-size:0.83rem; color:var(--text-sub); }
-.frow .ic { width:16px; text-align:center; font-size:0.85rem; flex-shrink:0; }
-.stars { display:flex; gap:2px; margin-top:4px; }
-.star { font-size:0.8rem; color:#ddd; }
-.star.on { color:#c9913a; }
-.fcard-tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:12px; }
-.ftag { font-size:0.68rem; letter-spacing:0.04em; padding:3px 9px; border-radius:4px; background:var(--bg2); color:var(--text-dim); border:1px solid var(--border2); }
-.fcard-foot { display:flex; align-items:center; justify-content:space-between; padding:12px 22px; border-top:1px solid var(--border2); background:var(--bg2); }
-.favail { display:flex; align-items:center; gap:7px; font-size:0.75rem; color:var(--text-dim); font-weight:500; }
-.adot { width:7px; height:7px; border-radius:50%; }
-.adot.yes { background:#167a50; box-shadow:0 0 6px #167a5066; }
-.adot.no  { background:#a02020; }
-.factions { display:flex; gap:7px; }
-.ibtn { background:transparent; border:1px solid var(--border2); border-radius:4px; padding:6px 11px; font-size:0.82rem; cursor:pointer; color:var(--text-dim); transition:all 0.2s; }
-.ibtn:hover     { border-color:var(--gold-dim); color:var(--gold); }
-.ibtn.del:hover { border-color:rgba(160,32,32,0.4); color:#a02020; }
-.ibtn.wa:hover  { border-color:rgba(22,122,80,0.4); color:#167a50; }
-
-/* ── EMPTY / LOADING ── */
-.empty,.loading { text-align:center; padding:80px 20px; color:var(--text-dim); }
-.anim-tri { width:40px; height:36px; margin:0 auto 18px; }
-.empty p,.loading p { font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase; margin-top:12px; }
-
-/* ══════════════════════════════════════════════
-   ESCALA
-══════════════════════════════════════════════ */
-.escala-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
-.escala-title { font-family:'Outfit',sans-serif; font-weight:600; font-size:1.1rem; color:var(--text); }
-.escala-sub { font-size:0.78rem; color:var(--text-dim); margin-top:2px; }
-
-/* Selector de FDS */
-.fds-selector { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-.fds-selector select { background:var(--card); border:1px solid var(--border2); border-radius:6px; padding:9px 14px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none; cursor:pointer; }
-.fds-selector select:focus { border-color:var(--gold-dim); }
+/* ══ ESCALA ══ */
+.escala-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.escala-title{font-family:'Outfit',sans-serif;font-weight:600;font-size:1.1rem}
+.escala-sub{font-size:0.78rem;color:var(--text-dim);margin-top:2px}
+.fds-selector{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fds-selector select{background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:9px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;cursor:pointer}
+.fds-selector select:focus{border-color:var(--gold-dim)}
 
 /* 3 colunas dias */
-.dias-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px; }
-@media(max-width:900px){ .dias-grid { grid-template-columns:1fr; } }
+.dias-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.dia-col{background:var(--card);border:1px solid var(--border2);border-radius:10px;overflow:hidden}
+.dia-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border2)}
+.dia-label{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem}
+.dia-counts{display:flex;gap:6px;align-items:center}
+.dia-count{font-size:0.72rem;font-weight:600;padding:3px 9px;border-radius:50px}
+.cnt-total{background:color-mix(in srgb,var(--gold) 12%,transparent);color:var(--gold)}
+.cnt-conf{background:color-mix(in srgb,var(--verde) 12%,transparent);color:var(--verde)}
+.dia-sexta .dia-header{background:color-mix(in srgb,#9a7018 5%,transparent);border-top:3px solid #9a7018}
+.dia-sabado .dia-header{background:color-mix(in srgb,var(--gold) 5%,transparent);border-top:3px solid var(--gold)}
+.dia-domingo .dia-header{background:color-mix(in srgb,#b04020 5%,transparent);border-top:3px solid #b04020}
+.dia-body{padding:10px}
+.dia-add{width:100%;padding:8px;border:1px dashed var(--border);border-radius:6px;background:transparent;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;transition:all 0.2s;margin-top:4px}
+.dia-add:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 5%,transparent)}
 
-.dia-col { background:var(--card); border:1px solid var(--border2); border-radius:10px; overflow:hidden; }
-.dia-header { padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border2); }
-.dia-label { font-family:'Outfit',sans-serif; font-weight:600; font-size:1rem; }
-.dia-count { font-size:0.75rem; font-weight:600; color:var(--gold); background:color-mix(in srgb,var(--gold) 12%,transparent); padding:3px 10px; border-radius:50px; }
+/* ── CONF CARD — o card de cada freelancer no dia ── */
+.conf-card{border:1px solid var(--border2);border-radius:8px;margin-bottom:8px;overflow:hidden;animation:up 0.25s ease both;background:var(--bg2)}
+.conf-card.confirmado{border-left:3px solid var(--verde)}
+.conf-card.pendente{border-left:3px solid var(--laranja)}
+.conf-card.ausente{border-left:3px solid var(--vermelho);opacity:0.75}
 
-.dia-sexta   .dia-header { background:color-mix(in srgb,#9a7018 6%,transparent); border-top:3px solid #9a7018; }
-.dia-sabado  .dia-header { background:color-mix(in srgb,var(--gold) 6%,transparent); border-top:3px solid var(--gold); }
-.dia-domingo .dia-header { background:color-mix(in srgb,#b04020 6%,transparent); border-top:3px solid #b04020; }
+.conf-top{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.conf-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;color:#fff;flex-shrink:0;background:var(--ac,var(--gold))}
+.conf-info{flex:1;min-width:0}
+.conf-name{font-weight:600;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conf-meta{display:flex;align-items:center;gap:6px;margin-top:2px}
+.conf-area-badge{font-size:0.65rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--ac,var(--gold))}
+.conf-status-badge{font-size:0.62rem;font-weight:600;padding:1px 7px;border-radius:50px}
+.status-pendente{background:color-mix(in srgb,var(--laranja) 15%,transparent);color:var(--laranja)}
+.status-confirmado{background:color-mix(in srgb,var(--verde) 15%,transparent);color:var(--verde)}
+.status-ausente{background:color-mix(in srgb,var(--vermelho) 15%,transparent);color:var(--vermelho)}
 
-.dia-body { padding:12px; min-height:80px; }
+.conf-actions-row{display:flex;gap:5px;flex-shrink:0}
+.cibtn{background:transparent;border:1px solid var(--border2);border-radius:4px;padding:4px 8px;font-size:0.75rem;cursor:pointer;color:var(--text-dim);transition:all 0.2s;white-space:nowrap}
+.cibtn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.cibtn.conf-ok{border-color:rgba(22,122,80,0.3);color:var(--verde)}
+.cibtn.conf-ok:hover{background:rgba(22,122,80,0.1)}
+.cibtn.conf-aus{border-color:rgba(160,32,32,0.3);color:var(--vermelho)}
+.cibtn.conf-aus:hover{background:rgba(160,32,32,0.08)}
+.cibtn.conf-pend{border-color:rgba(201,145,58,0.35);color:var(--laranja)}
+.cibtn.conf-pend:hover{background:rgba(201,145,58,0.1)}
+.cibtn.wa-small:hover{border-color:rgba(22,122,80,0.4);color:#167a50}
+.cibtn.del-small:hover{border-color:rgba(160,32,32,0.4);color:#a02020}
 
-/* card de confirmado dentro do dia */
-.conf-card { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:6px; border:1px solid var(--border2); background:var(--bg2); margin-bottom:8px; gap:8px; animation:up 0.25s ease both; }
-.conf-info { flex:1; }
-.conf-name { font-weight:600; font-size:0.88rem; }
-.conf-area { font-size:0.72rem; color:var(--text-dim); display:flex; align-items:center; gap:5px; margin-top:2px; }
-.conf-area-dot { width:7px; height:7px; border-radius:50%; background:var(--ac,var(--gold)); flex-shrink:0; }
-.conf-actions { display:flex; gap:6px; flex-shrink:0; }
-.conf-wa { background:transparent; border:1px solid rgba(22,122,80,0.3); color:#167a50; border-radius:4px; padding:4px 8px; font-size:0.75rem; cursor:pointer; transition:all 0.2s; }
-.conf-wa:hover { background:rgba(22,122,80,0.1); }
-.conf-del { background:transparent; border:1px solid rgba(160,32,32,0.25); color:#a02020; border-radius:4px; padding:4px 8px; font-size:0.75rem; cursor:pointer; transition:all 0.2s; }
-.conf-del:hover { background:rgba(160,32,32,0.08); }
+/* Avaliação dentro do card */
+.conf-avaliacao{padding:8px 12px 10px;border-top:1px solid var(--border2);background:var(--card)}
+.aval-label{font-size:0.65rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-dim);margin-bottom:5px}
+.aval-stars{display:flex;gap:4px;margin-bottom:6px}
+.aval-star{font-size:1.1rem;cursor:pointer;color:#ddd;transition:color 0.12s,transform 0.1s}
+.aval-star.on{color:#c9913a}.aval-star:hover{transform:scale(1.15)}
+.aval-obs{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:5px;padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:0.8rem;color:var(--text);outline:none;resize:none;transition:border-color 0.2s}
+.aval-obs:focus{border-color:var(--gold-dim)}
+.aval-save{margin-top:6px;font-family:'Outfit',sans-serif;font-weight:500;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;padding:5px 14px;border:none;border-radius:4px;background:var(--gold);color:#fff;cursor:pointer;transition:background 0.2s}
+.aval-save:hover{background:var(--gold-light)}
+.aval-done{font-size:0.72rem;color:var(--verde);font-weight:600;margin-top:4px;display:flex;align-items:center;gap:4px}
 
-.dia-add { width:100%; padding:8px; border:1px dashed var(--border); border-radius:6px; background:transparent; color:var(--text-dim); font-family:'DM Sans',sans-serif; font-size:0.8rem; cursor:pointer; transition:all 0.2s; margin-top:4px; }
-.dia-add:hover { border-color:var(--gold); color:var(--gold); background:color-mix(in srgb,var(--gold) 5%,transparent); }
-
-/* Resumo por área */
-.area-resumo { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-bottom:32px; }
-.area-chip { background:var(--card); border:1px solid var(--border2); border-radius:8px; padding:14px 16px; display:flex; align-items:center; gap:10px; }
-.area-chip-dot { width:10px; height:10px; border-radius:50%; background:var(--ac,var(--gold)); flex-shrink:0; }
-.area-chip-info { flex:1; }
-.area-chip-label { font-size:0.75rem; font-weight:600; color:var(--text-sub); text-transform:uppercase; }
-.area-chip-n { font-family:'Outfit',sans-serif; font-weight:700; font-size:1.4rem; color:var(--ac,var(--gold)); line-height:1; }
+/* Resumo áreas */
+.area-resumo{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:28px}
+.area-chip{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.area-chip-dot{width:10px;height:10px;border-radius:50%;background:var(--ac,var(--gold));flex-shrink:0}
+.area-chip-label{font-size:0.72rem;font-weight:600;color:var(--text-sub);text-transform:uppercase}
+.area-chip-n{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.3rem;color:var(--ac,var(--gold));line-height:1}
 
 /* Histórico */
-.hist-section { margin-top:40px; }
-.hist-title { font-family:'Outfit',sans-serif; font-weight:600; font-size:1rem; color:var(--text); margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border2); }
-.hist-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
-.hist-card { background:var(--card); border:1px solid var(--border2); border-radius:8px; padding:18px 20px; cursor:pointer; transition:all 0.2s; }
-.hist-card:hover { border-color:var(--gold); box-shadow:0 4px 16px rgba(160,100,30,0.1); }
-.hist-card.selected { border-color:var(--gold); background:color-mix(in srgb,var(--gold) 5%,transparent); }
-.hist-date { font-family:'Outfit',sans-serif; font-weight:600; font-size:0.95rem; color:var(--gold); }
-.hist-meta { font-size:0.78rem; color:var(--text-dim); margin-top:4px; }
-.hist-pills { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
-.hist-pill { font-size:0.68rem; font-weight:600; padding:3px 9px; border-radius:50px; background:var(--bg2); color:var(--text-sub); border:1px solid var(--border2); }
+.hist-section{margin-top:36px}
+.hist-title{font-family:'Outfit',sans-serif;font-weight:600;font-size:1rem;color:var(--text);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border2)}
+.hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.hist-card{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:16px 20px;cursor:pointer;transition:all 0.2s}
+.hist-card:hover{border-color:var(--gold);box-shadow:0 4px 16px rgba(160,100,30,0.1)}
+.hist-card.selected{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 5%,transparent)}
+.hist-date{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem;color:var(--gold)}
+.hist-meta{font-size:0.78rem;color:var(--text-dim);margin-top:4px}
+.hist-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.hist-pill{font-size:0.68rem;font-weight:600;padding:3px 9px;border-radius:50px;background:var(--bg2);color:var(--text-sub);border:1px solid var(--border2)}
 
-/* ── MODAL ── */
-.overlay { position:fixed; inset:0; background:rgba(40,30,10,0.6); backdrop-filter:blur(8px); z-index:200; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity 0.3s; }
-.overlay.open { opacity:1; pointer-events:all; }
-.modal { background:var(--card); border:1px solid var(--border); border-radius:10px; width:100%; max-width:540px; max-height:92vh; overflow-y:auto; transform:translateY(22px) scale(0.98); transition:transform 0.3s; box-shadow:0 20px 60px rgba(0,0,0,0.15); }
-.overlay.open .modal { transform:translateY(0) scale(1); }
-.modal-top { padding:24px 32px 18px; border-bottom:1px solid var(--border2); display:flex; align-items:center; gap:14px; }
-.modal-tri svg { width:24px; }
-.mtitle { font-family:'Outfit',sans-serif; font-weight:700; font-size:1.05rem; color:var(--gold); }
-.msub { font-size:0.72rem; color:var(--text-dim); margin-top:2px; }
-.modal-body { padding:22px 32px; }
-.fg { margin-bottom:16px; }
-.fg label { display:block; font-family:'Outfit',sans-serif; font-weight:600; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-dim); margin-bottom:7px; }
-.fg input,.fg select,.fg textarea { width:100%; background:var(--bg2); border:1px solid var(--border2); border-radius:6px; padding:10px 13px; color:var(--text); font-family:'DM Sans',sans-serif; font-weight:400; font-size:0.88rem; outline:none; transition:border-color 0.2s; -webkit-appearance:none; }
-.fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--gold-dim); }
-.fg input::placeholder { color:var(--text-dim); }
-.fg textarea { resize:vertical; min-height:68px; }
-.fg select option { background:var(--card); }
-.gr2 { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
-.gr3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:13px; }
-.star-pick { display:flex; gap:5px; margin-top:3px; }
-.star-pick span { font-size:1.3rem; cursor:pointer; color:#ddd; transition:color 0.12s,transform 0.12s; }
-.star-pick span.on { color:#c9913a; }
-.star-pick span:hover { transform:scale(1.15); }
-.chk { display:flex; align-items:center; gap:10px; font-size:0.85rem; color:var(--text-sub); cursor:pointer; margin-bottom:10px; }
-.chk input[type=checkbox] { accent-color:var(--gold); width:15px; height:15px; cursor:pointer; }
-.modal-foot { padding:14px 32px 24px; display:flex; justify-content:flex-end; gap:10px; }
+/* MODAIS */
+.overlay{position:fixed;inset:0;background:rgba(40,30,10,0.6);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:10px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;transform:translateY(22px) scale(0.98);transition:transform 0.3s;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
+.overlay.open .modal{transform:translateY(0) scale(1)}
+.modal-top{padding:24px 32px 18px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:14px}
+.modal-tri svg{width:24px}
+.mtitle{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.05rem;color:var(--gold)}
+.msub{font-size:0.72rem;color:var(--text-dim);margin-top:2px}
+.modal-body{padding:22px 32px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:10px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold-dim)}
+.fg input::placeholder{color:var(--text-dim)}
+.fg textarea{resize:vertical;min-height:68px}
+.fg select option{background:var(--card)}
+.gr2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.gr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+.star-pick{display:flex;gap:5px;margin-top:3px}
+.star-pick span{font-size:1.3rem;cursor:pointer;color:#ddd;transition:color 0.12s,transform 0.12s}
+.star-pick span.on{color:#c9913a}.star-pick span:hover{transform:scale(1.15)}
+.chk{display:flex;align-items:center;gap:10px;font-size:0.85rem;color:var(--text-sub);cursor:pointer;margin-bottom:10px}
+.chk input[type=checkbox]{accent-color:var(--gold);width:15px;height:15px;cursor:pointer}
+.modal-foot{padding:14px 32px 24px;display:flex;justify-content:flex-end;gap:10px}
 
-/* Modal de adicionar à escala */
-.freelancer-pick { display:flex; flex-direction:column; gap:8px; max-height:320px; overflow-y:auto; }
-.fpick-item { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border:1px solid var(--border2); border-radius:6px; background:var(--bg2); cursor:pointer; transition:all 0.2s; }
-.fpick-item:hover { border-color:var(--gold); background:color-mix(in srgb,var(--gold) 6%,transparent); }
-.fpick-item.selected { border-color:var(--verde); background:color-mix(in srgb,var(--verde) 8%,transparent); }
-.fpick-name { font-weight:600; font-size:0.88rem; }
-.fpick-area { font-size:0.72rem; color:var(--text-dim); }
-.fpick-check { font-size:1rem; color:var(--verde); }
+/* picker freelancers */
+.freelancer-pick{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
+.fpick-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border2);border-radius:6px;background:var(--bg2);cursor:pointer;transition:all 0.2s}
+.fpick-item:hover{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 6%,transparent)}
+.fpick-item.selected{border-color:var(--verde);background:color-mix(in srgb,var(--verde) 8%,transparent)}
+.fpick-name{font-weight:600;font-size:0.88rem}
+.fpick-area{font-size:0.72rem;color:var(--text-dim)}
+.fpick-check{font-size:1rem;color:var(--verde);font-weight:700}
 
-/* area color classes */
-.ac-cozinha   { --ac:var(--cozinha); }   .pc-cozinha   { --pc:var(--cozinha); }
-.ac-limpeza   { --ac:var(--limpeza); }   .pc-limpeza   { --pc:var(--limpeza); }
-.ac-bartender { --ac:var(--bartender); } .pc-bartender { --pc:var(--bartender); }
-.ac-cumim     { --ac:var(--cumim); }     .pc-cumim     { --pc:var(--cumim); }
-.ac-garcom    { --ac:var(--garcom); }    .pc-garcom    { --pc:var(--garcom); }
-.ac-seguranca { --ac:var(--seguranca); } .pc-seguranca { --pc:var(--seguranca); }
-.ac-producao  { --ac:var(--producao); }  .pc-producao  { --pc:var(--producao); }
+/* area colors */
+.ac-cozinha{--ac:var(--cozinha)}.pc-cozinha{--pc:var(--cozinha)}
+.ac-limpeza{--ac:var(--limpeza)}.pc-limpeza{--pc:var(--limpeza)}
+.ac-bartender{--ac:var(--bartender)}.pc-bartender{--pc:var(--bartender)}
+.ac-cumim{--ac:var(--cumim)}.pc-cumim{--pc:var(--cumim)}
+.ac-garcom{--ac:var(--garcom)}.pc-garcom{--pc:var(--garcom)}
+.ac-seguranca{--ac:var(--seguranca)}.pc-seguranca{--pc:var(--seguranca)}
+.ac-producao{--ac:var(--producao)}.pc-producao{--pc:var(--producao)}
 
-::-webkit-scrollbar { width:5px; }
-::-webkit-scrollbar-track { background:var(--bg2); }
-::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
+@media(max-width:900px){.dias-grid{grid-template-columns:1fr}}
 @media(max-width:680px){
-  .header-inner,main,.tabs-inner { padding-left:20px; padding-right:20px; }
-  .gr2,.gr3 { grid-template-columns:1fr; }
-  .modal-top,.modal-body,.modal-foot { padding-left:20px; padding-right:20px; }
-  .live-badge { display:none; }
-  .dias-grid { grid-template-columns:1fr; }
+  .header-inner,main,.tabs-inner{padding-left:20px;padding-right:20px}
+  .gr2,.gr3{grid-template-columns:1fr}
+  .modal-top,.modal-body,.modal-foot{padding-left:20px;padding-right:20px}
+  .live-badge{display:none}
 }
 </style>
 </head>
@@ -294,12 +272,10 @@ main { max-width:1360px; margin:0 auto; padding:40px 48px; }
 <header>
   <div class="header-inner">
     <div class="logo-wrap">
-      <div class="logo-icon">
-        <svg viewBox="0 0 40 36" fill="none">
-          <path d="M2 34 L20 3 L38 34" stroke="#b07d2a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M2 34 L14 34" stroke="#b07d2a" stroke-width="2.2" stroke-linecap="round"/>
-        </svg>
-      </div>
+      <svg width="30" height="27" viewBox="0 0 40 36" fill="none">
+        <path d="M2 34 L20 3 L38 34" stroke="#b07d2a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 34 L14 34" stroke="#b07d2a" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
       <div>
         <div class="logo-text">AURA</div>
         <span class="logo-sub">Lounge Bar · Equipe</span>
@@ -313,7 +289,6 @@ main { max-width:1360px; margin:0 auto; padding:40px 48px; }
   </div>
 </header>
 
-<!-- TABS -->
 <div class="tabs-bar">
   <div class="tabs-inner">
     <button class="tab-btn active" onclick="switchTab('freelancers',this)">👥 Freelancers</button>
@@ -323,112 +298,108 @@ main { max-width:1360px; margin:0 auto; padding:40px 48px; }
 
 <main>
 
-  <!-- ══ TAB: FREELANCERS ══ -->
-  <div class="tab-panel active" id="tab-freelancers">
-    <div class="stats" id="stats"></div>
-
-    <div class="toolbar">
-      <div class="search-box">
-        <span class="si">⌕</span>
-        <input type="text" id="searchInput" placeholder="Buscar por nome, habilidade, cidade…" oninput="render()">
-      </div>
-      <div class="pills">
-        <button class="pill active" style="--pc:var(--gold)" onclick="setFilter(this,'todos')">Todos</button>
-        <button class="pill pc-cozinha"   onclick="setFilter(this,'cozinha')">Cozinha</button>
-        <button class="pill pc-limpeza"   onclick="setFilter(this,'limpeza')">Limpeza</button>
-        <button class="pill pc-bartender" onclick="setFilter(this,'bartender')">Bartender</button>
-        <button class="pill pc-cumim"     onclick="setFilter(this,'cumim')">Cumim</button>
-        <button class="pill pc-garcom"    onclick="setFilter(this,'garcom')">Garçom</button>
-        <button class="pill pc-seguranca" onclick="setFilter(this,'seguranca')">Segurança</button>
-        <button class="pill pc-producao"  onclick="setFilter(this,'producao')">Produção</button>
-        <button class="pill" style="--pc:#167a50" onclick="setFilter(this,'disponiveis')">Disponíveis</button>
-      </div>
+<!-- ══ TAB FREELANCERS ══ -->
+<div class="tab-panel active" id="tab-freelancers">
+  <div class="stats" id="stats"></div>
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="si">⌕</span>
+      <input type="text" id="searchInput" placeholder="Buscar por nome, habilidade, cidade…" oninput="render()">
     </div>
-
-    <div id="loadingState" class="loading">
-      <svg class="anim-tri" viewBox="0 0 40 36" fill="none">
-        <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none" stroke-dasharray="110" stroke-dashoffset="110">
-          <animate attributeName="stroke-dashoffset" from="110" to="0" dur="1.4s" repeatCount="indefinite"/>
-        </path>
-      </svg>
-      <p>Conectando ao banco de dados</p>
+    <div class="pills">
+      <button class="pill active" style="--pc:var(--gold)" onclick="setFilter(this,'todos')">Todos</button>
+      <button class="pill pc-cozinha"   onclick="setFilter(this,'cozinha')">Cozinha</button>
+      <button class="pill pc-limpeza"   onclick="setFilter(this,'limpeza')">Limpeza</button>
+      <button class="pill pc-bartender" onclick="setFilter(this,'bartender')">Bartender</button>
+      <button class="pill pc-cumim"     onclick="setFilter(this,'cumim')">Cumim</button>
+      <button class="pill pc-garcom"    onclick="setFilter(this,'garcom')">Garçom</button>
+      <button class="pill pc-seguranca" onclick="setFilter(this,'seguranca')">Segurança</button>
+      <button class="pill pc-producao"  onclick="setFilter(this,'producao')">Produção</button>
+      <button class="pill" style="--pc:#167a50" onclick="setFilter(this,'disponiveis')">Disponíveis</button>
     </div>
-    <div class="grid" id="grid" style="display:none"></div>
-    <div class="empty" id="empty" style="display:none">
-      <svg class="anim-tri" viewBox="0 0 40 36" fill="none" style="opacity:.3">
-        <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none"/>
-      </svg>
-      <p>Nenhum freelancer encontrado</p>
+  </div>
+  <div id="loadingState" class="loading">
+    <svg class="anim-tri" viewBox="0 0 40 36" fill="none">
+      <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none" stroke-dasharray="110" stroke-dashoffset="110">
+        <animate attributeName="stroke-dashoffset" from="110" to="0" dur="1.4s" repeatCount="indefinite"/>
+      </path>
+    </svg>
+    <p>Conectando ao banco de dados</p>
+  </div>
+  <div class="grid" id="grid" style="display:none"></div>
+  <div class="empty" id="empty" style="display:none">
+    <svg class="anim-tri" viewBox="0 0 40 36" fill="none" style="opacity:.3">
+      <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none"/>
+    </svg>
+    <p>Nenhum freelancer encontrado</p>
+  </div>
+</div>
+
+<!-- ══ TAB ESCALA ══ -->
+<div class="tab-panel" id="tab-escala">
+  <div class="escala-top">
+    <div>
+      <div class="escala-title">Escala do Final de Semana</div>
+      <div class="escala-sub">Confirme presenças e avalie o desempenho após o turno</div>
+    </div>
+    <div class="fds-selector">
+      <select id="fdsSelect" onchange="selectFDSFromDropdown()">
+        <option value="">Selecione um FDS…</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="openNovoFDS()">+ Novo FDS</button>
     </div>
   </div>
 
-  <!-- ══ TAB: ESCALA ══ -->
-  <div class="tab-panel" id="tab-escala">
+  <div class="area-resumo" id="areaResumo" style="display:none"></div>
 
-    <div class="escala-top">
-      <div>
-        <div class="escala-title">Escala do Final de Semana</div>
-        <div class="escala-sub">Gerencie quem trabalha em cada dia</div>
+  <div class="dias-grid" id="diasGrid" style="display:none">
+    <div class="dia-col dia-sexta">
+      <div class="dia-header">
+        <span class="dia-label">Sexta-feira</span>
+        <div class="dia-counts">
+          <span class="dia-count cnt-conf" id="cconf-sexta">0 ✓</span>
+          <span class="dia-count cnt-total" id="ctot-sexta">0</span>
+        </div>
       </div>
-      <div class="fds-selector">
-        <select id="fdsSelect" onchange="renderEscala()">
-          <option value="">Selecione um FDS…</option>
-        </select>
-        <button class="btn btn-outline btn-sm" onclick="openNovoFDS()">+ Novo FDS</button>
-      </div>
+      <div class="dia-body" id="dia-sexta"></div>
+      <div style="padding:0 10px 10px"><button class="dia-add" onclick="openAddConf('sexta')">+ Adicionar profissional</button></div>
     </div>
-
-    <!-- Resumo por área -->
-    <div class="area-resumo" id="areaResumo" style="display:none"></div>
-
-    <!-- 3 colunas dias -->
-    <div class="dias-grid" id="diasGrid" style="display:none">
-      <div class="dia-col dia-sexta">
-        <div class="dia-header">
-          <span class="dia-label">Sexta-feira</span>
-          <span class="dia-count" id="cnt-sexta">0</span>
-        </div>
-        <div class="dia-body" id="dia-sexta"></div>
-        <div style="padding:0 12px 12px">
-          <button class="dia-add" onclick="openAddConf('sexta')">+ Adicionar profissional</button>
+    <div class="dia-col dia-sabado">
+      <div class="dia-header">
+        <span class="dia-label">Sábado</span>
+        <div class="dia-counts">
+          <span class="dia-count cnt-conf" id="cconf-sabado">0 ✓</span>
+          <span class="dia-count cnt-total" id="ctot-sabado">0</span>
         </div>
       </div>
-      <div class="dia-col dia-sabado">
-        <div class="dia-header">
-          <span class="dia-label">Sábado</span>
-          <span class="dia-count" id="cnt-sabado">0</span>
-        </div>
-        <div class="dia-body" id="dia-sabado"></div>
-        <div style="padding:0 12px 12px">
-          <button class="dia-add" onclick="openAddConf('sabado')">+ Adicionar profissional</button>
+      <div class="dia-body" id="dia-sabado"></div>
+      <div style="padding:0 10px 10px"><button class="dia-add" onclick="openAddConf('sabado')">+ Adicionar profissional</button></div>
+    </div>
+    <div class="dia-col dia-domingo">
+      <div class="dia-header">
+        <span class="dia-label">Domingo</span>
+        <div class="dia-counts">
+          <span class="dia-count cnt-conf" id="cconf-domingo">0 ✓</span>
+          <span class="dia-count cnt-total" id="ctot-domingo">0</span>
         </div>
       </div>
-      <div class="dia-col dia-domingo">
-        <div class="dia-header">
-          <span class="dia-label">Domingo</span>
-          <span class="dia-count" id="cnt-domingo">0</span>
-        </div>
-        <div class="dia-body" id="dia-domingo"></div>
-        <div style="padding:0 12px 12px">
-          <button class="dia-add" onclick="openAddConf('domingo')">+ Adicionar profissional</button>
-        </div>
-      </div>
+      <div class="dia-body" id="dia-domingo"></div>
+      <div style="padding:0 10px 10px"><button class="dia-add" onclick="openAddConf('domingo')">+ Adicionar profissional</button></div>
     </div>
+  </div>
 
-    <div id="escalaEmpty" class="empty">
-      <svg class="anim-tri" viewBox="0 0 40 36" fill="none" style="opacity:.3">
-        <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none"/>
-      </svg>
-      <p>Selecione ou crie um final de semana para começar</p>
-    </div>
+  <div id="escalaEmpty" class="empty">
+    <svg class="anim-tri" viewBox="0 0 40 36" fill="none" style="opacity:.3">
+      <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none"/>
+    </svg>
+    <p>Selecione ou crie um final de semana para começar</p>
+  </div>
 
-    <!-- Histórico -->
-    <div class="hist-section" id="histSection" style="display:none">
-      <div class="hist-title">📋 Histórico de Finais de Semana</div>
-      <div class="hist-grid" id="histGrid"></div>
-    </div>
-
-  </div><!-- /tab-escala -->
+  <div class="hist-section" id="histSection" style="display:none">
+    <div class="hist-title">📋 Histórico de Finais de Semana</div>
+    <div class="hist-grid" id="histGrid"></div>
+  </div>
+</div>
 
 </main>
 
@@ -436,16 +407,8 @@ main { max-width:1360px; margin:0 auto; padding:40px 48px; }
 <div class="overlay" id="overlay" onclick="closeOut(event)">
   <div class="modal">
     <div class="modal-top">
-      <div class="modal-tri">
-        <svg viewBox="0 0 40 36" fill="none">
-          <path d="M2 34 L20 3 L38 34" stroke="#b07d2a" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path d="M2 34 L13 34" stroke="#b07d2a" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div>
-        <div class="mtitle" id="modalTitle">Novo Freelancer</div>
-        <div class="msub">Preencha os dados do profissional</div>
-      </div>
+      <svg width="24" viewBox="0 0 40 36" fill="none"><path d="M2 34 L20 3 L38 34" stroke="#b07d2a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M2 34 L13 34" stroke="#b07d2a" stroke-width="2" stroke-linecap="round"/></svg>
+      <div><div class="mtitle" id="modalTitle">Novo Freelancer</div><div class="msub">Preencha os dados do profissional</div></div>
     </div>
     <div class="modal-body">
       <div class="gr2">
@@ -453,12 +416,9 @@ main { max-width:1360px; margin:0 auto; padding:40px 48px; }
         <div class="fg"><label>Área *</label>
           <select id="f_area">
             <option value="">Selecione…</option>
-            <option value="cozinha">Cozinha</option>
-            <option value="limpeza">Limpeza</option>
-            <option value="bartender">Bartender</option>
-            <option value="cumim">Cumim</option>
-            <option value="garcom">Garçom</option>
-            <option value="seguranca">Segurança</option>
+            <option value="cozinha">Cozinha</option><option value="limpeza">Limpeza</option>
+            <option value="bartender">Bartender</option><option value="cumim">Cumim</option>
+            <option value="garcom">Garçom</option><option value="seguranca">Segurança</option>
             <option value="producao">Produção</option>
           </select>
         </div>
@@ -470,25 +430,15 @@ main { max-width:1360px; margin:0 auto; padding:40px 48px; }
       <div class="gr3">
         <div class="fg"><label>Cidade</label><input type="text" id="f_cidade" placeholder="Montes Claros"></div>
         <div class="fg"><label>Experiência</label>
-          <select id="f_exp">
-            <option value="">Não informado</option>
-            <option>Iniciante</option><option>Intermediário</option>
-            <option>Experiente</option><option>Especialista</option>
-          </select>
+          <select id="f_exp"><option value="">Não informado</option><option>Iniciante</option><option>Intermediário</option><option>Experiente</option><option>Especialista</option></select>
         </div>
         <div class="fg"><label>Tamanho uniforme</label>
-          <select id="f_unif">
-            <option value="">Não informado</option>
-            <option>PP</option><option>P</option><option>M</option>
-            <option>G</option><option>GG</option><option>XGG</option>
-          </select>
+          <select id="f_unif"><option value="">Não informado</option><option>PP</option><option>P</option><option>M</option><option>G</option><option>GG</option><option>XGG</option></select>
         </div>
       </div>
-      <div class="fg">
-        <label>Avaliação</label>
+      <div class="fg"><label>Avaliação geral</label>
         <div class="star-pick" id="starPick">
-          <span data-v="1">★</span><span data-v="2">★</span>
-          <span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+          <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
         </div>
       </div>
       <div class="fg"><label>Habilidades / tags (separadas por vírgula)</label><input type="text" id="f_tags" placeholder="Ex: drinks, coquetelaria, flair"></div>
@@ -506,9 +456,7 @@ main { max-width:1360px; margin:0 auto; padding:40px 48px; }
 <!-- ══ MODAL NOVO FDS ══ -->
 <div class="overlay" id="overlayFDS" onclick="closeFDSOut(event)">
   <div class="modal" style="max-width:400px">
-    <div class="modal-top">
-      <div><div class="mtitle">Novo Final de Semana</div><div class="msub">Defina o período</div></div>
-    </div>
+    <div class="modal-top"><div><div class="mtitle">Novo Final de Semana</div><div class="msub">Defina o período</div></div></div>
     <div class="modal-body">
       <div class="gr2">
         <div class="fg"><label>Data da Sexta *</label><input type="date" id="fds_sexta"></div>
@@ -525,17 +473,9 @@ main { max-width:1360px; margin:0 auto; padding:40px 48px; }
 <!-- ══ MODAL ADICIONAR À ESCALA ══ -->
 <div class="overlay" id="overlayConf" onclick="closeConfOut(event)">
   <div class="modal" style="max-width:460px">
-    <div class="modal-top">
-      <div>
-        <div class="mtitle" id="confTitle">Adicionar à Sexta</div>
-        <div class="msub">Selecione os profissionais</div>
-      </div>
-    </div>
+    <div class="modal-top"><div><div class="mtitle" id="confTitle">Adicionar à Sexta</div><div class="msub">Selecione os profissionais</div></div></div>
     <div class="modal-body">
-      <div class="fg">
-        <label>Buscar</label>
-        <input type="text" id="confSearch" placeholder="Nome ou área…" oninput="renderPicker()">
-      </div>
+      <div class="fg"><label>Buscar</label><input type="text" id="confSearch" placeholder="Nome ou área…" oninput="renderPicker()"></div>
       <div class="freelancer-pick" id="freelancerPick"></div>
     </div>
     <div class="modal-foot">
@@ -546,50 +486,45 @@ main { max-width:1360px; margin:0 auto; padding:40px 48px; }
 </div>
 
 <script>
-const AREAS = {
-  cozinha:   { label:'Cozinha',   icon:'🍳', color:'#b04020' },
-  limpeza:   { label:'Limpeza',   icon:'🧹', color:'#1e6ea0' },
-  bartender: { label:'Bartender', icon:'🍸', color:'#9a7018' },
-  cumim:     { label:'Cumim',     icon:'🍽',  color:'#167a50' },
-  garcom:    { label:'Garçom',    icon:'🤵', color:'#6a1ea0' },
-  seguranca: { label:'Segurança', icon:'🛡',  color:'#a02020' },
-  producao:  { label:'Produção',  icon:'🎛',  color:'#1e58a0' },
+const AREAS={
+  cozinha:{label:'Cozinha',icon:'🍳',color:'#b04020'},
+  limpeza:{label:'Limpeza',icon:'🧹',color:'#1e6ea0'},
+  bartender:{label:'Bartender',icon:'🍸',color:'#9a7018'},
+  cumim:{label:'Cumim',icon:'🍽',color:'#167a50'},
+  garcom:{label:'Garçom',icon:'🤵',color:'#6a1ea0'},
+  seguranca:{label:'Segurança',icon:'🛡',color:'#a02020'},
+  producao:{label:'Produção',icon:'🎛',color:'#1e58a0'},
 };
-const DIAS = ['sexta','sabado','domingo'];
+const DIAS=['sexta','sabado','domingo'];
 
-window._freelancers = [];
-window._escalas     = [];
-let currentFilter = 'todos';
-let editingId     = null;
-let starVal       = 0;
-let dataLoaded    = false;
-let currentFDS    = null; // id da escala selecionada
-let addingDia     = null; // 'sexta'|'sabado'|'domingo'
-let pickerSelected= new Set();
+window._freelancers=[];
+window._escalas=[];
+let currentFilter='todos',editingId=null,starVal=0,dataLoaded=false;
+let currentFDS=null,addingDia=null,pickerSelected=new Set();
 
 // ── TABS ────────────────────────────────────────────────────
-function switchTab(id, btn) {
+function switchTab(id,btn){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   btn.classList.add('active');
 }
 
-// ── STARS ────────────────────────────────────────────────────
-document.querySelectorAll('#starPick span').forEach(s => {
-  s.addEventListener('click', ()=>{ starVal=+s.dataset.v; updateStars(); });
-  s.addEventListener('mouseenter', ()=>{
-    document.querySelectorAll('#starPick span').forEach((x,i)=>{ x.style.color=i<+s.dataset.v?'#c9913a':''; });
+// ── STARS (modal freelancer) ─────────────────────────────────
+document.querySelectorAll('#starPick span').forEach(s=>{
+  s.addEventListener('click',()=>{starVal=+s.dataset.v;updateStars();});
+  s.addEventListener('mouseenter',()=>{
+    document.querySelectorAll('#starPick span').forEach((x,i)=>{x.style.color=i<+s.dataset.v?'#c9913a':'';});
   });
 });
-document.getElementById('starPick').addEventListener('mouseleave', ()=>updateStars());
-function updateStars() {
-  document.querySelectorAll('#starPick span').forEach((x,i)=>{ x.classList.toggle('on',i<starVal); x.style.color=''; });
+document.getElementById('starPick').addEventListener('mouseleave',()=>updateStars());
+function updateStars(){
+  document.querySelectorAll('#starPick span').forEach((x,i)=>{x.classList.toggle('on',i<starVal);x.style.color='';});
 }
 
-// ── RENDER FREELANCERS ────────────────────────────────────────
-window.render = function() {
-  if (!dataLoaded) {
+// ── RENDER FREELANCERS ───────────────────────────────────────
+window.render=function(){
+  if(!dataLoaded){
     dataLoaded=true;
     document.getElementById('loadingState').style.display='none';
     document.getElementById('grid').style.display='grid';
@@ -622,7 +557,7 @@ window.render = function() {
         </div>
         <div class="fcard-info">
           <div class="frow"><span class="ic">📞</span>${f.tel}</div>
-          ${f.valor?`<div class="frow"><span class="ic">💰</span>R$ ${f.valor} / diária</div>`:''}
+          ${f.valor?`<div class="frow"><span class="ic">💰</span>R$ ${f.valor}/diária</div>`:''}
           ${f.cidade?`<div class="frow"><span class="ic">📍</span>${f.cidade}</div>`:''}
           ${f.exp?`<div class="frow"><span class="ic">◈</span>${f.exp}</div>`:''}
           ${f.unif?`<div class="frow"><span class="ic">👕</span>Uniforme ${f.unif}</div>`:''}
@@ -641,8 +576,6 @@ window.render = function() {
       </div>
     </div>`;
   }).join('');
-
-  // atualiza escala tb
   if(window._escalas.length) renderEscala();
 };
 
@@ -659,63 +592,77 @@ function renderStats(){
 
 function setFilter(el,area){
   document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active'); currentFilter=area; render();
+  el.classList.add('active');currentFilter=area;render();
 }
 
-// ── RENDER ESCALA ────────────────────────────────────────────
-window.renderEscala = function() {
-  // popular select de FDS
+// ── RENDER ESCALA ───────────────────────────────────────────
+window.renderEscala=function(){
   const sel=document.getElementById('fdsSelect');
   const prev=sel.value;
   sel.innerHTML='<option value="">Selecione um FDS…</option>';
   window._escalas.forEach(e=>{
     const opt=document.createElement('option');
-    opt.value=e.id; opt.textContent=fdsLabel(e);
-    sel.appendChild(opt);
+    opt.value=e.id;opt.textContent=fdsLabel(e);sel.appendChild(opt);
   });
   if(prev) sel.value=prev;
   if(sel.value) currentFDS=sel.value;
-
-  // histórico
   renderHistorico();
-
-  if(!currentFDS){ showEscalaEmpty(); return; }
+  if(!currentFDS){showEscalaEmpty();return;}
   const escala=window._escalas.find(e=>e.id===currentFDS);
-  if(!escala){ showEscalaEmpty(); return; }
-
+  if(!escala){showEscalaEmpty();return;}
   document.getElementById('escalaEmpty').style.display='none';
   document.getElementById('diasGrid').style.display='grid';
   document.getElementById('areaResumo').style.display='grid';
 
-  // renderizar cada dia
   DIAS.forEach(dia=>{
-    const confs=(escala[dia]||[]);
-    document.getElementById('cnt-'+dia).textContent=confs.length;
+    const confs=escala[dia]||[];
+    const nConf=confs.filter(c=>c.status==='confirmado').length;
+    document.getElementById('ctot-'+dia).textContent=confs.length+' total';
+    document.getElementById('cconf-'+dia).textContent=nConf+' ✓';
     document.getElementById('dia-'+dia).innerHTML=confs.map(c=>{
       const f=window._freelancers.find(x=>x.id===c.fId)||{};
       const a=AREAS[f.area||c.area]||{};
       const waNum=(f.tel||'').replace(/\D/g,'');
-      return `<div class="conf-card ac-${f.area||c.area}">
-        <div class="conf-info">
-          <div class="conf-name">${f.nome||c.nome}</div>
-          <div class="conf-area"><span class="conf-area-dot"></span>${a.label||c.area||'—'}</div>
+      const status=c.status||'pendente';
+      const initials=(f.nome||c.nome||'?').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
+      // avaliação
+      const avalStars=[1,2,3,4,5].map(n=>`<span class="aval-star${(c.avalRating||0)>=n?' on':''}" onclick="setAvalStar('${dia}','${c.fId}',${n},this)"">★</span>`).join('');
+      const temAval=c.avalRating>0||c.avalObs;
+      return `<div class="conf-card ${status} ac-${f.area||c.area}" id="cc-${dia}-${c.fId}">
+        <div class="conf-top">
+          <div class="conf-avatar ac-${f.area||c.area}">${initials}</div>
+          <div class="conf-info">
+            <div class="conf-name">${f.nome||c.nome}</div>
+            <div class="conf-meta">
+              <span class="conf-area-badge">${a.label||c.area}</span>
+              <span class="conf-status-badge status-${status}">${status==='confirmado'?'✓ Confirmado':status==='ausente'?'✗ Ausente':'⏳ Pendente'}</span>
+            </div>
+          </div>
+          <div class="conf-actions-row">
+            ${status!=='confirmado'?`<button class="cibtn conf-ok" title="Confirmar presença" onclick="setStatus('${dia}','${c.fId}','confirmado')">✓</button>`:''}
+            ${status!=='ausente'?`<button class="cibtn conf-aus" title="Marcar ausência" onclick="setStatus('${dia}','${c.fId}','ausente')">✗</button>`:''}
+            ${status!=='pendente'?`<button class="cibtn conf-pend" title="Voltar a pendente" onclick="setStatus('${dia}','${c.fId}','pendente')">⏳</button>`:''}
+            ${waNum?`<button class="cibtn wa-small" onclick="openWA('${waNum}','${f.nome||c.nome}','${a.label||c.area}')">💬</button>`:''}
+            <button class="cibtn del-small" onclick="removerConf('${dia}','${c.fId}')">✕</button>
+          </div>
         </div>
-        <div class="conf-actions">
-          ${waNum?`<button class="conf-wa" onclick="openWA('${waNum}','${f.nome||c.nome}','${a.label||c.area}')">💬</button>`:''}
-          <button class="conf-del" onclick="removerConf('${dia}','${c.fId}')">✕</button>
+        <div class="conf-avaliacao">
+          <div class="aval-label">Avaliação do dia</div>
+          <div class="aval-stars" id="astars-${dia}-${c.fId}">${avalStars}</div>
+          <textarea class="aval-obs" id="aobs-${dia}-${c.fId}" rows="2" placeholder="Observação sobre o desempenho…">${c.avalObs||''}</textarea>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
+            <button class="aval-save" onclick="salvarAvaliacao('${dia}','${c.fId}')">Salvar avaliação</button>
+            ${temAval?`<div class="aval-done">✓ Avaliado</div>`:''}
+          </div>
         </div>
       </div>`;
     }).join('');
   });
 
-  // resumo por área
-  const todosConf=DIAS.flatMap(dia=>(escala[dia]||[]));
+  // resumo por área (total confirmados)
+  const todosConf=DIAS.flatMap(d=>(escala[d]||[]).filter(c=>c.status==='confirmado'));
   const areaCount={};
-  todosConf.forEach(c=>{
-    const f=window._freelancers.find(x=>x.id===c.fId)||{};
-    const area=f.area||c.area||'?';
-    areaCount[area]=(areaCount[area]||0)+1;
-  });
+  todosConf.forEach(c=>{const f=window._freelancers.find(x=>x.id===c.fId)||{};const area=f.area||c.area||'?';areaCount[area]=(areaCount[area]||0)+1;});
   document.getElementById('areaResumo').innerHTML=Object.entries(AREAS).map(([k,v])=>`
     <div class="area-chip ac-${k}">
       <span class="area-chip-dot"></span>
@@ -736,7 +683,7 @@ function fdsLabel(e){
   if(!e.dataInicio) return 'FDS sem data';
   const d=new Date(e.dataInicio+'T12:00:00');
   const sexta=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-  const dom=new Date(d); dom.setDate(d.getDate()+2);
+  const dom=new Date(d);dom.setDate(d.getDate()+2);
   const domingo=dom.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
   return `${sexta} – ${domingo}${e.obs?' · '+e.obs:''}`;
 }
@@ -748,107 +695,124 @@ function renderHistorico(){
   sec.style.display='block';
   document.getElementById('histGrid').innerHTML=hist.map(e=>{
     const total=DIAS.reduce((s,d)=>s+(e[d]||[]).length,0);
-    const areas=[...new Set(DIAS.flatMap(d=>(e[d]||[]).map(c=>{
-      const f=window._freelancers.find(x=>x.id===c.fId)||{};
-      return f.area||c.area;
-    })))].filter(Boolean);
+    const conf=DIAS.reduce((s,d)=>s+(e[d]||[]).filter(c=>c.status==='confirmado').length,0);
+    const areas=[...new Set(DIAS.flatMap(d=>(e[d]||[]).map(c=>{const f=window._freelancers.find(x=>x.id===c.fId)||{};return f.area||c.area;})))].filter(Boolean);
     return `<div class="hist-card${currentFDS===e.id?' selected':''}" onclick="selectFDS('${e.id}')">
       <div class="hist-date">${fdsLabel(e)}</div>
-      <div class="hist-meta">${total} profissional${total!==1?'s':''} confirmado${total!==1?'s':''}</div>
+      <div class="hist-meta">${total} escalado${total!==1?'s':''} · ${conf} confirmado${conf!==1?'s':''}</div>
       <div class="hist-pills">${areas.map(a=>`<span class="hist-pill">${AREAS[a]?.label||a}</span>`).join('')}</div>
     </div>`;
   }).join('');
 }
 
-function selectFDS(id){
-  currentFDS=id;
-  document.getElementById('fdsSelect').value=id;
-  renderEscala();
+function selectFDS(id){currentFDS=id;document.getElementById('fdsSelect').value=id;renderEscala();}
+function selectFDSFromDropdown(){currentFDS=document.getElementById('fdsSelect').value;renderEscala();}
+
+// ── STATUS CONFIRMAÇÃO ───────────────────────────────────────
+async function setStatus(dia,fId,status){
+  if(!currentFDS) return;
+  const escala=window._escalas.find(e=>e.id===currentFDS)||{};
+  const confs=(escala[dia]||[]).map(c=>c.fId===fId?{...c,status}:c);
+  const{db,ref,set}=window._fb;
+  await set(ref(db,`escalas/${currentFDS}/${dia}`),confs);
+}
+
+// ── AVALIAÇÃO ────────────────────────────────────────────────
+let avalStarsState={};// {dia-fId: rating}
+
+function setAvalStar(dia,fId,val,el){
+  const key=`${dia}-${fId}`;
+  avalStarsState[key]=val;
+  const container=document.getElementById(`astars-${dia}-${fId}`);
+  container.querySelectorAll('.aval-star').forEach((s,i)=>{
+    s.classList.toggle('on',i<val);
+  });
+}
+
+async function salvarAvaliacao(dia,fId){
+  if(!currentFDS) return;
+  const key=`${dia}-${fId}`;
+  const rating=avalStarsState[key]||0;
+  const obs=(document.getElementById(`aobs-${dia}-${fId}`)?.value||'').trim();
+  const escala=window._escalas.find(e=>e.id===currentFDS)||{};
+  const confs=(escala[dia]||[]).map(c=>c.fId===fId?{...c,avalRating:rating,avalObs:obs}:c);
+  const{db,ref,set}=window._fb;
+  await set(ref(db,`escalas/${currentFDS}/${dia}`),confs);
 }
 
 // ── NOVO FDS ─────────────────────────────────────────────────
 function openNovoFDS(){
-  // pré-preencher com a próxima sexta
   const hoje=new Date();
-  const diaSemana=hoje.getDay(); // 0=dom
-  const diasParaSexta=diaSemana<=5?(5-diaSemana):(5+7-diaSemana);
+  const dd=hoje.getDay();
+  const diasParaSexta=dd<=5?(5-dd):(12-dd);
   const proxSexta=new Date(hoje);
   proxSexta.setDate(hoje.getDate()+diasParaSexta);
   document.getElementById('fds_sexta').value=proxSexta.toISOString().slice(0,10);
   document.getElementById('fds_obs').value='';
   document.getElementById('overlayFDS').classList.add('open');
 }
-function closeFDS(){ document.getElementById('overlayFDS').classList.remove('open'); }
-function closeFDSOut(e){ if(e.target===document.getElementById('overlayFDS')) closeFDS(); }
-
+function closeFDS(){document.getElementById('overlayFDS').classList.remove('open');}
+function closeFDSOut(e){if(e.target===document.getElementById('overlayFDS'))closeFDS();}
 async function salvarFDS(){
   const data=document.getElementById('fds_sexta').value;
   if(!data){alert('Selecione a data da sexta-feira.');return;}
   const obs=document.getElementById('fds_obs').value.trim();
-  const {db,ref,push,escalaRef}=window._fb;
-  const nova={dataInicio:data,obs,sexta:[],sabado:[],domingo:[],criadoEm:Date.now()};
-  const res=await push(escalaRef,nova);
+  const{db,ref,push,escalaRef}=window._fb;
+  const res=await push(escalaRef,{dataInicio:data,obs,sexta:[],sabado:[],domingo:[],criadoEm:Date.now()});
   currentFDS=res.key;
   closeFDS();
 }
 
-// ── ADICIONAR À ESCALA ────────────────────────────────────────
+// ── ADICIONAR À ESCALA ───────────────────────────────────────
 function openAddConf(dia){
   if(!currentFDS){alert('Selecione um final de semana primeiro.');return;}
-  addingDia=dia;
-  pickerSelected=new Set();
+  addingDia=dia;pickerSelected=new Set();
   const labels={sexta:'Sexta-feira',sabado:'Sábado',domingo:'Domingo'};
   document.getElementById('confTitle').textContent='Adicionar à '+labels[dia];
   document.getElementById('confSearch').value='';
-  // pré-marcar já confirmados neste dia
   const escala=window._escalas.find(e=>e.id===currentFDS)||{};
   (escala[dia]||[]).forEach(c=>pickerSelected.add(c.fId));
   renderPicker();
   document.getElementById('overlayConf').classList.add('open');
 }
-function closeConf(){ document.getElementById('overlayConf').classList.remove('open'); addingDia=null; }
-function closeConfOut(e){ if(e.target===document.getElementById('overlayConf')) closeConf(); }
+function closeConf(){document.getElementById('overlayConf').classList.remove('open');addingDia=null;}
+function closeConfOut(e){if(e.target===document.getElementById('overlayConf'))closeConf();}
 
 function renderPicker(){
   const q=(document.getElementById('confSearch').value||'').toLowerCase();
   const list=window._freelancers.filter(f=>!q||f.nome.toLowerCase().includes(q)||(AREAS[f.area]?.label||'').toLowerCase().includes(q));
   document.getElementById('freelancerPick').innerHTML=list.map(f=>{
-    const a=AREAS[f.area]||{};
-    const sel=pickerSelected.has(f.id);
+    const a=AREAS[f.area]||{};const sel=pickerSelected.has(f.id);
     return `<div class="fpick-item${sel?' selected':''}" onclick="togglePick('${f.id}')">
-      <div>
-        <div class="fpick-name">${f.nome}</div>
-        <div class="fpick-area">${a.icon||''} ${a.label||f.area}</div>
-      </div>
+      <div><div class="fpick-name">${f.nome}</div><div class="fpick-area">${a.icon||''} ${a.label||f.area}</div></div>
       ${sel?'<span class="fpick-check">✓</span>':''}
     </div>`;
   }).join('');
 }
-
-function togglePick(id){
-  if(pickerSelected.has(id)) pickerSelected.delete(id);
-  else pickerSelected.add(id);
-  renderPicker();
-}
+function togglePick(id){if(pickerSelected.has(id))pickerSelected.delete(id);else pickerSelected.add(id);renderPicker();}
 
 async function confirmarSelecao(){
   if(!currentFDS||!addingDia) return;
   const escala=window._escalas.find(e=>e.id===currentFDS)||{};
+  const existing=escala[addingDia]||[];
+  const existingIds=new Set(existing.map(c=>c.fId));
+  // mantém dados existentes (status, avaliação), adiciona novos, remove desmarcados
   const confs=Array.from(pickerSelected).map(fId=>{
+    if(existingIds.has(fId)) return existing.find(c=>c.fId===fId);
     const f=window._freelancers.find(x=>x.id===fId)||{};
-    return {fId, nome:f.nome, area:f.area};
+    return{fId,nome:f.nome,area:f.area,status:'pendente',avalRating:0,avalObs:''};
   });
-  const {db,ref,set}=window._fb;
-  await set(ref(db,`escalas/${currentFDS}/${addingDia}`), confs);
+  const{db,ref,set}=window._fb;
+  await set(ref(db,`escalas/${currentFDS}/${addingDia}`),confs);
   closeConf();
 }
 
-async function removerConf(dia, fId){
+async function removerConf(dia,fId){
   if(!currentFDS) return;
   const escala=window._escalas.find(e=>e.id===currentFDS)||{};
   const novos=(escala[dia]||[]).filter(c=>c.fId!==fId);
-  const {db,ref,set}=window._fb;
-  await set(ref(db,`escalas/${currentFDS}/${dia}`), novos);
+  const{db,ref,set}=window._fb;
+  await set(ref(db,`escalas/${currentFDS}/${dia}`),novos);
 }
 
 // ── MODAL FREELANCER ─────────────────────────────────────────
@@ -871,15 +835,15 @@ function openModal(id=null){
     starVal=f.rating||0;
   } else {
     ['f_nome','f_area','f_tel','f_valor','f_cidade','f_tags','f_obs'].forEach(x=>document.getElementById(x).value='');
-    document.getElementById('f_exp').value=''; document.getElementById('f_unif').value='';
-    document.getElementById('f_disp').checked=true; document.getElementById('f_transp').checked=false;
+    document.getElementById('f_exp').value='';document.getElementById('f_unif').value='';
+    document.getElementById('f_disp').checked=true;document.getElementById('f_transp').checked=false;
     starVal=0;
   }
   updateStars();
   document.getElementById('overlay').classList.add('open');
 }
-function closeModal(){ document.getElementById('overlay').classList.remove('open'); editingId=null; }
-function closeOut(e){ if(e.target===document.getElementById('overlay')) closeModal(); }
+function closeModal(){document.getElementById('overlay').classList.remove('open');editingId=null;}
+function closeOut(e){if(e.target===document.getElementById('overlay'))closeModal();}
 
 async function saveF(){
   const nome=document.getElementById('f_nome').value.trim();
@@ -887,7 +851,7 @@ async function saveF(){
   const tel=document.getElementById('f_tel').value.trim();
   if(!nome||!area||!tel){alert('Preencha nome, área e telefone.');return;}
   const btn=document.getElementById('saveBtn');
-  btn.textContent='Salvando…'; btn.disabled=true;
+  btn.textContent='Salvando…';btn.disabled=true;
   const data={nome,area,tel,
     valor:document.getElementById('f_valor').value.trim(),
     cidade:document.getElementById('f_cidade').value.trim(),
@@ -900,12 +864,12 @@ async function saveF(){
     rating:starVal,
     criadoEm:editingId?(window._freelancers.find(x=>x.id===editingId)?.criadoEm||Date.now()):Date.now(),
   };
-  try {
+  try{
     const{db,ref,set,push,dbRef}=window._fb;
     if(editingId) await set(ref(db,`freelancers/${editingId}`),data);
     else await push(dbRef,data);
     closeModal();
-  } catch(e){alert('Erro ao salvar.');console.error(e);}
+  }catch(e){alert('Erro ao salvar.');console.error(e);}
   finally{btn.textContent='Salvar';btn.disabled=false;}
 }
 
@@ -921,14 +885,14 @@ function openWA(num,nome,area){
 }
 
 function exportCSV(){
-  const rows=[['Nome','Área','Telefone','Valor/Diária','Cidade','Experiência','Uniforme','Avaliação','Tags','Observações','Disponível FDS','Transporte']];
+  const rows=[['Nome','Área','Telefone','Valor/Diária','Cidade','Experiência','Uniforme','Avaliação Geral','Tags','Observações','Disponível FDS','Transporte']];
   window._freelancers.forEach(f=>{
     rows.push([f.nome,AREAS[f.area]?.label||f.area,f.tel,f.valor,f.cidade,f.exp,f.unif,f.rating,(f.tags||[]).join('; '),f.obs,f.disp?'Sim':'Não',f.transp?'Sim':'Não']);
   });
   const csv=rows.map(r=>r.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-  a.download='aura_equipe.csv'; a.click();
+  a.download='aura_equipe.csv';a.click();
 }
 
 setTimeout(()=>{
