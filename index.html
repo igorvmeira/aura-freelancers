@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AURA · Equipe</title>
-<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -39,33 +39,33 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --gold:       #c9913a;
-  --gold-light: #e8b86a;
-  --gold-pale:  #f0d49a;
-  --gold-dim:   #7a5820;
-  --bg:         #0f0e0c;
-  --bg2:        #141210;
-  --card:       #1a1714;
-  --card2:      #201d19;
-  --border:     rgba(201,145,58,0.18);
-  --border2:    rgba(201,145,58,0.09);
-  --text:       #f5efe0;
-  --text-sub:   #a08c6a;
-  --text-dim:   #5a4e38;
-  --cozinha:    #c4623a;
-  --limpeza:    #3a8fc4;
-  --bartender:  #c49a3a;
-  --cumim:      #3ab87a;
-  --garcom:     #9a3ac4;
-  --seguranca:  #c43a3a;
-  --producao:   #3a7ac4;
+  --gold:       #b07d2a;
+  --gold-light: #c9913a;
+  --gold-pale:  #6a4010;
+  --gold-dim:   #b07d2a;
+  --bg:         #f5efe2;
+  --bg2:        #ede6d4;
+  --card:       #ffffff;
+  --card2:      #f9f4eb;
+  --border:     rgba(160,100,30,0.28);
+  --border2:    rgba(160,100,30,0.16);
+  --text:       #28200e;
+  --text-sub:   #4a3418;
+  --text-dim:   #7a5828;
+  --cozinha:    #b04020;
+  --limpeza:    #1e6ea0;
+  --bartender:  #9a7018;
+  --cumim:      #167a50;
+  --garcom:     #6a1ea0;
+  --seguranca:  #a02020;
+  --producao:   #1e58a0;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Jost', sans-serif;
-  font-weight: 300;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -73,7 +73,7 @@ body {
 /* ── HEADER ── */
 header {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(15,14,12,0.97);
+  background: rgba(245,239,226,0.97);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border2);
 }
@@ -85,21 +85,21 @@ header {
 .logo-wrap { display: flex; align-items: center; gap: 14px; }
 .logo-icon svg { width: 30px; height: 27px; }
 .logo-text {
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 100; font-size: 1.45rem;
-  letter-spacing: 0.5em; color: var(--gold);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400; font-size: 1.45rem;
+  letter-spacing: 0.25em; color: var(--gold);
   text-transform: uppercase;
 }
 .logo-sub {
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 200; font-size: 0.58rem;
-  letter-spacing: 0.32em; color: var(--text-dim);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500; font-size: 0.82rem;
+  letter-spacing: 0.06em; color: var(--text-dim);
   text-transform: uppercase; display: block; margin-top: -2px;
 }
 .header-right { display: flex; align-items: center; gap: 14px; }
 .live-badge {
   display: flex; align-items: center; gap: 7px;
-  font-size: 0.68rem; letter-spacing: 0.12em;
+  font-size: 0.78rem; letter-spacing: 0.04em;
   text-transform: uppercase; color: var(--text-dim);
 }
 .live-dot {
@@ -111,9 +111,9 @@ header {
 
 /* ── BUTTONS ── */
 .btn {
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 300; font-size: 0.7rem;
-  letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400; font-size: 0.7rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
   padding: 10px 22px; border: none; border-radius: 2px;
   cursor: pointer; transition: all 0.22s;
 }
@@ -131,13 +131,13 @@ main { max-width: 1360px; margin: 0 auto; padding: 48px; position: relative; z-i
   border-bottom: 1px solid var(--border2);
 }
 .hero-title {
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 100; font-size: 1.9rem;
-  letter-spacing: 0.3em; color: var(--gold-pale);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400; font-size: 1.9rem;
+  letter-spacing: 0.06em; color: var(--gold); 
   text-transform: uppercase;
 }
 .hero-sub {
-  font-size: 0.7rem; letter-spacing: 0.15em;
+  font-size: 0.7rem; letter-spacing: 0.06em;
   color: var(--text-dim); text-transform: uppercase;
 }
 
@@ -156,13 +156,13 @@ main { max-width: 1360px; margin: 0 auto; padding: 48px; position: relative; z-i
 }
 .stat:hover { border-top-color: var(--gold); }
 .stat-n {
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 100; font-size: 2.2rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400; font-size: 2.2rem;
   color: var(--ac, var(--gold)); line-height: 1;
   letter-spacing: 0.05em;
 }
 .stat-l {
-  font-size: 0.62rem; letter-spacing: 0.14em;
+  font-size: 0.75rem; letter-spacing: 0.04em;
   text-transform: uppercase; color: var(--text-dim); margin-top: 5px;
 }
 
@@ -173,8 +173,8 @@ main { max-width: 1360px; margin: 0 auto; padding: 48px; position: relative; z-i
   width: 100%; background: var(--card);
   border: 1px solid var(--border2); border-radius: 2px;
   padding: 11px 16px 11px 42px;
-  color: var(--text); font-family: 'Jost', sans-serif;
-  font-weight: 300; font-size: 0.86rem; letter-spacing: 0.04em;
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-weight: 400; font-size: 0.86rem; letter-spacing: 0.04em;
   outline: none; transition: border-color 0.2s;
 }
 .search-box input:focus { border-color: var(--gold-dim); }
@@ -183,9 +183,9 @@ main { max-width: 1360px; margin: 0 auto; padding: 48px; position: relative; z-i
 
 .pills { display: flex; gap: 7px; flex-wrap: wrap; }
 .pill {
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 300; font-size: 0.62rem;
-  letter-spacing: 0.18em; text-transform: uppercase;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400; font-size: 0.75rem;
+  letter-spacing: 0.06em; text-transform: uppercase;
   padding: 7px 15px; border-radius: 50px;
   border: 1px solid var(--border2);
   background: transparent; color: var(--text-dim);
@@ -217,13 +217,13 @@ main { max-width: 1360px; margin: 0 auto; padding: 48px; position: relative; z-i
 .fcard-body { padding: 20px 22px; }
 .fcard-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
 .fcard-name {
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 200; font-size: 1rem;
-  letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500; font-size: 1rem;
+  letter-spacing: 0.04em; text-transform: uppercase;
 }
 .fcard-badge {
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--ac); border: 1px solid color-mix(in srgb, var(--ac) 32%, transparent);
   background: color-mix(in srgb, var(--ac) 8%, transparent);
   padding: 4px 11px; border-radius: 50px; white-space: nowrap;
@@ -236,16 +236,16 @@ main { max-width: 1360px; margin: 0 auto; padding: 48px; position: relative; z-i
 .star.on { color: var(--gold); }
 .fcard-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 12px; }
 .ftag {
-  font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-size: 0.75rem; letter-spacing: 0.03em; text-transform: uppercase;
   padding: 2px 9px; border-radius: 2px;
   background: var(--bg2); color: var(--text-dim); border: 1px solid var(--border2);
 }
 .fcard-foot {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 22px; border-top: 1px solid var(--border2);
-  background: rgba(0,0,0,0.18);
+  background: rgba(160,100,30,0.06);
 }
-.favail { display: flex; align-items: center; gap: 7px; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+.favail { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; letter-spacing: 0.03em; text-transform: uppercase; color: var(--text-dim); }
 .adot { width: 6px; height: 6px; border-radius: 50%; }
 .adot.yes { background: #3ab87a; box-shadow: 0 0 6px #3ab87a66; }
 .adot.no  { background: #c43a3a; }
@@ -263,18 +263,18 @@ main { max-width: 1360px; margin: 0 auto; padding: 48px; position: relative; z-i
 /* ── EMPTY / LOADING ── */
 .empty, .loading { text-align: center; padding: 90px 20px; color: var(--text-dim); }
 .anim-tri { width: 40px; height: 36px; margin: 0 auto 18px; }
-.empty p, .loading p { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; }
+.empty p, .loading p { font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; }
 
 /* ── MODAL ── */
 .overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
+  background: rgba(40,30,10,0.6); backdrop-filter: blur(10px);
   z-index: 200; display: flex; align-items: center; justify-content: center;
   padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s;
 }
 .overlay.open { opacity: 1; pointer-events: all; }
 .modal {
-  background: var(--bg2); border: 1px solid var(--border);
+  background: var(--card); border: 1px solid var(--border);
   border-radius: 4px; width: 100%; max-width: 540px;
   max-height: 92vh; overflow-y: auto;
   transform: translateY(22px) scale(0.98); transition: transform 0.3s;
@@ -288,25 +288,25 @@ main { max-width: 1360px; margin: 0 auto; padding: 48px; position: relative; z-i
 }
 .modal-tri svg { width: 26px; }
 .mtitle {
-  font-family: 'Josefin Sans', sans-serif;
-  font-weight: 100; font-size: 1.05rem;
-  letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold-pale);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400; font-size: 1.05rem;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); 
 }
-.msub { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
+.msub { font-size: 0.76rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
 
 .modal-body { padding: 24px 34px; }
 .fg { margin-bottom: 16px; }
 .fg label {
   display: block;
-  font-family: 'Josefin Sans', sans-serif; font-weight: 300;
-  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: 'Outfit', sans-serif; font-weight: 400;
+  font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text-dim); margin-bottom: 7px;
 }
 .fg input, .fg select, .fg textarea {
   width: 100%; background: var(--card2);
   border: 1px solid var(--border2); border-radius: 2px;
   padding: 10px 13px; color: var(--text);
-  font-family: 'Jost', sans-serif; font-weight: 300;
+  font-family: 'DM Sans', sans-serif; font-weight: 400;
   font-size: 0.86rem; outline: none; transition: border-color 0.2s;
   -webkit-appearance: none;
 }
@@ -337,7 +337,7 @@ main { max-width: 1360px; margin: 0 auto; padding: 48px; position: relative; z-i
 .ac-producao  { --ac: var(--producao); }  .pc-producao  { --pc: var(--producao); }
 
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-track { background: var(--bg2); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 @media(max-width:680px){
