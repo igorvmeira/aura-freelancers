@@ -182,16 +182,16 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 .cibtn.del-small:hover{border-color:rgba(160,32,32,0.4);color:#a02020}
 
 /* Avaliação dentro do card */
-.conf-avaliacao{padding:8px 12px 10px;border-top:1px solid var(--border2);background:var(--card)}
-.aval-label{font-size:0.65rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-dim);margin-bottom:5px}
-.aval-stars{display:flex;gap:4px;margin-bottom:6px}
-.aval-star{font-size:1.1rem;cursor:pointer;color:#ddd;transition:color 0.12s,transform 0.1s}
-.aval-star.on{color:#c9913a}.aval-star:hover{transform:scale(1.15)}
-.aval-obs{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:5px;padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:0.8rem;color:var(--text);outline:none;resize:none;transition:border-color 0.2s}
-.aval-obs:focus{border-color:var(--gold-dim)}
-.aval-save{margin-top:6px;font-family:'Outfit',sans-serif;font-weight:500;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;padding:5px 14px;border:none;border-radius:4px;background:var(--gold);color:#fff;cursor:pointer;transition:background 0.2s}
-.aval-save:hover{background:var(--gold-light)}
-.aval-done{font-size:0.72rem;color:var(--verde);font-weight:600;margin-top:4px;display:flex;align-items:center;gap:4px}
+.aval-badge{display:inline-flex;align-items:center;gap:4px;font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:50px;border:1px solid rgba(201,145,58,0.3);color:#9a7018;background:color-mix(in srgb,#c9913a 10%,transparent)}
+.aval-badge.done{background:color-mix(in srgb,var(--verde) 10%,transparent);color:var(--verde);border-color:rgba(22,122,80,0.3)}
+.aval-prof-header{display:flex;align-items:center;gap:16px;padding:22px 32px 18px;border-bottom:1px solid var(--border2)}
+.aval-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;color:#fff;flex-shrink:0}
+.aval-prof-name{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.05rem}
+.aval-prof-sub{font-size:0.76rem;color:var(--text-dim);margin-top:3px}
+.aval-big-stars{display:flex;gap:10px;margin:12px 0 6px}
+.aval-big-star{font-size:2.2rem;cursor:pointer;color:#ddd;transition:color 0.12s,transform 0.15s;line-height:1;user-select:none}
+.aval-big-star.on{color:#c9913a}.aval-big-star:hover{transform:scale(1.2)}
+.aval-rating-text{font-size:0.82rem;color:var(--text-dim);min-height:20px;font-weight:500}
 
 /* Resumo áreas */
 .area-resumo{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:28px}
@@ -626,8 +626,8 @@ window.renderEscala=function(){
       const status=c.status||'pendente';
       const initials=(f.nome||c.nome||'?').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
       // avaliação
-      const avalStars=[1,2,3,4,5].map(n=>`<span class="aval-star${(c.avalRating||0)>=n?' on':''}" onclick="setAvalStar('${dia}','${c.fId}',${n},this)"">★</span>`).join('');
       const temAval=c.avalRating>0||c.avalObs;
+      const avalStarsPreview=temAval?[1,2,3,4,5].map(n=>`<span style="font-size:.75rem;color:${(c.avalRating||0)>=n?'#c9913a':'#ddd'}">★</span>`).join(''):'';
       return `<div class="conf-card ${status} ac-${f.area||c.area}" id="cc-${dia}-${c.fId}">
         <div class="conf-top">
           <div class="conf-avatar ac-${f.area||c.area}">${initials}</div>
@@ -637,22 +637,15 @@ window.renderEscala=function(){
               <span class="conf-area-badge">${a.label||c.area}</span>
               <span class="conf-status-badge status-${status}">${status==='confirmado'?'✓ Confirmado':status==='ausente'?'✗ Ausente':'⏳ Pendente'}</span>
             </div>
+            ${temAval?`<div style="display:flex;align-items:center;gap:4px;margin-top:4px">${avalStarsPreview}<span style="font-size:.68rem;color:var(--text-dim);margin-left:2px">avaliado</span></div>`:''}
           </div>
           <div class="conf-actions-row">
             ${status!=='confirmado'?`<button class="cibtn conf-ok" title="Confirmar presença" onclick="setStatus('${dia}','${c.fId}','confirmado')">✓</button>`:''}
             ${status!=='ausente'?`<button class="cibtn conf-aus" title="Marcar ausência" onclick="setStatus('${dia}','${c.fId}','ausente')">✗</button>`:''}
             ${status!=='pendente'?`<button class="cibtn conf-pend" title="Voltar a pendente" onclick="setStatus('${dia}','${c.fId}','pendente')">⏳</button>`:''}
             ${waNum?`<button class="cibtn wa-small" onclick="openWA('${waNum}','${f.nome||c.nome}','${a.label||c.area}')">💬</button>`:''}
+            <button class="cibtn" style="color:var(--gold);border-color:rgba(176,125,42,0.3)" onclick="openAvalModal('${dia}','${c.fId}')" title="Avaliar desempenho">⭐</button>
             <button class="cibtn del-small" onclick="removerConf('${dia}','${c.fId}')">✕</button>
-          </div>
-        </div>
-        <div class="conf-avaliacao">
-          <div class="aval-label">Avaliação do dia</div>
-          <div class="aval-stars" id="astars-${dia}-${c.fId}">${avalStars}</div>
-          <textarea class="aval-obs" id="aobs-${dia}-${c.fId}" rows="2" placeholder="Observação sobre o desempenho…">${c.avalObs||''}</textarea>
-          <div style="display:flex;align-items:center;gap:10px;margin-top:5px">
-            <button class="aval-save" onclick="salvarAvaliacao('${dia}','${c.fId}')">Salvar avaliação</button>
-            ${temAval?`<div class="aval-done">✓ Avaliado</div>`:''}
           </div>
         </div>
       </div>`;
@@ -718,26 +711,57 @@ async function setStatus(dia,fId,status){
 }
 
 // ── AVALIAÇÃO ────────────────────────────────────────────────
-let avalStarsState={};// {dia-fId: rating}
+// ── MODAL AVALIAÇÃO ─────────────────────────────────────────
+let avalModalDia=null,avalModalFId=null,avalModalRating=0;
 
-function setAvalStar(dia,fId,val,el){
-  const key=`${dia}-${fId}`;
-  avalStarsState[key]=val;
-  const container=document.getElementById(`astars-${dia}-${fId}`);
-  container.querySelectorAll('.aval-star').forEach((s,i)=>{
-    s.classList.toggle('on',i<val);
+function openAvalModal(dia,fId){
+  avalModalDia=dia;avalModalFId=fId;
+  const escala=window._escalas.find(e=>e.id===currentFDS)||{};
+  const conf=(escala[dia]||[]).find(c=>c.fId===fId)||{};
+  const f=window._freelancers.find(x=>x.id===fId)||{};
+  const a=AREAS[f.area||conf.area]||{};
+  avalModalRating=conf.avalRating||0;
+  // header
+  const initials=(f.nome||conf.nome||'?').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
+  const labels={sexta:'Sexta-feira',sabado:'Sábado',domingo:'Domingo'};
+  document.getElementById('avalProfAvatar').textContent=initials;
+  document.getElementById('avalProfAvatar').className='aval-avatar ac-'+(f.area||conf.area);
+  document.getElementById('avalProfName').textContent=f.nome||conf.nome;
+  document.getElementById('avalProfSub').textContent=(a.label||conf.area)+' · '+labels[dia];
+  document.getElementById('avalObs').value=conf.avalObs||'';
+  updateAvalBigStars();
+  document.getElementById('overlayAval').classList.add('open');
+}
+function closeAval(){document.getElementById('overlayAval').classList.remove('open');avalModalDia=null;avalModalFId=null;}
+function closeAvalOut(e){if(e.target===document.getElementById('overlayAval'))closeAval();}
+
+document.querySelectorAll('.aval-big-star').forEach(s=>{
+  s.addEventListener('click',()=>{avalModalRating=+s.dataset.v;updateAvalBigStars();});
+  s.addEventListener('mouseenter',()=>{
+    document.querySelectorAll('.aval-big-star').forEach((x,i)=>{x.style.color=i<+s.dataset.v?'#c9913a':'';});
   });
+});
+document.querySelector('.aval-big-stars').addEventListener('mouseleave',()=>updateAvalBigStars());
+
+const RATING_LABELS=['','Ruim','Regular','Bom','Muito bom','Excelente!'];
+function updateAvalBigStars(){
+  document.querySelectorAll('.aval-big-star').forEach((x,i)=>{x.classList.toggle('on',i<avalModalRating);x.style.color='';});
+  document.getElementById('avalRatingText').textContent=RATING_LABELS[avalModalRating]||'Clique para avaliar';
 }
 
-async function salvarAvaliacao(dia,fId){
-  if(!currentFDS) return;
-  const key=`${dia}-${fId}`;
-  const rating=avalStarsState[key]||0;
-  const obs=(document.getElementById(`aobs-${dia}-${fId}`)?.value||'').trim();
+async function salvarAvalModal(){
+  if(!currentFDS||!avalModalDia||!avalModalFId) return;
+  const obs=(document.getElementById('avalObs')?.value||'').trim();
   const escala=window._escalas.find(e=>e.id===currentFDS)||{};
-  const confs=(escala[dia]||[]).map(c=>c.fId===fId?{...c,avalRating:rating,avalObs:obs}:c);
-  const{db,ref,set}=window._fb;
-  await set(ref(db,`escalas/${currentFDS}/${dia}`),confs);
+  const confs=(escala[avalModalDia]||[]).map(c=>c.fId===avalModalFId?{...c,avalRating:avalModalRating,avalObs:obs}:c);
+  const btn=document.getElementById('avalSaveBtn');
+  btn.textContent='Salvando…';btn.disabled=true;
+  try{
+    const{db,ref,set}=window._fb;
+    await set(ref(db,`escalas/${currentFDS}/${avalModalDia}`),confs);
+    closeAval();
+  }catch(e){alert('Erro ao salvar.');console.error(e);}
+  finally{btn.textContent='Salvar avaliação';btn.disabled=false;}
 }
 
 // ── NOVO FDS ─────────────────────────────────────────────────
@@ -899,5 +923,39 @@ setTimeout(()=>{
   if(!dataLoaded) document.getElementById('loadingState').innerHTML='<p style="color:#a02020">⚠ Não foi possível conectar ao Firebase</p>';
 },8000);
 </script>
+<!-- ══ MODAL AVALIAÇÃO ══ -->
+<div class="overlay" id="overlayAval" onclick="closeAvalOut(event)">
+  <div class="modal" style="max-width:440px">
+    <div class="aval-prof-header">
+      <div class="aval-avatar" id="avalProfAvatar">AB</div>
+      <div>
+        <div class="aval-prof-name" id="avalProfName">Nome</div>
+        <div class="aval-prof-sub" id="avalProfSub">Área · Dia</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label>Desempenho no dia</label>
+        <div class="aval-big-stars">
+          <span class="aval-big-star" data-v="1">★</span>
+          <span class="aval-big-star" data-v="2">★</span>
+          <span class="aval-big-star" data-v="3">★</span>
+          <span class="aval-big-star" data-v="4">★</span>
+          <span class="aval-big-star" data-v="5">★</span>
+        </div>
+        <div class="aval-rating-text" id="avalRatingText">Clique para avaliar</div>
+      </div>
+      <div class="fg">
+        <label>Observações</label>
+        <textarea id="avalObs" rows="3" placeholder="Pontualidade, postura, desempenho, voltaria a chamar?…" style="width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:10px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;resize:vertical;transition:border-color 0.2s"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeAval()">Cancelar</button>
+      <button class="btn btn-gold" id="avalSaveBtn" onclick="salvarAvalModal()">Salvar avaliação</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
