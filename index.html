@@ -39,6 +39,7 @@
     window._escalas=Object.entries(data).map(([id,v])=>({id,...v}));
     window._escalas.sort((a,b)=>(b.dataInicio||'').localeCompare(a.dataInicio||''));
     if(window.renderEscala) window.renderEscala();
+    if(window.renderPagamentos) window.renderPagamentos();
   });
 </script>
 
@@ -791,7 +792,8 @@ window.renderEscala=function(){
   document.getElementById('areaResumo').style.display='grid';
 
   DIAS.forEach(dia=>{
-    const confs=escala[dia]||[];
+    const toArr=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
+    const confs=toArr(escala[dia]);
     const nConf=confs.filter(c=>c.status==='confirmado').length;
     document.getElementById('ctot-'+dia).textContent=confs.length+' total';
     document.getElementById('cconf-'+dia).textContent=nConf+' ✓';
@@ -994,7 +996,8 @@ function togglePick(id){if(pickerSelected.has(id))pickerSelected.delete(id);else
 async function confirmarSelecao(){
   if(!currentFDS||!addingDia) return;
   const escala=window._escalas.find(e=>e.id===currentFDS)||{};
-  const existing=escala[addingDia]||[];
+  const toArr=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
+  const existing=toArr(escala[addingDia]);
   const existingIds=new Set(existing.map(c=>c.fId));
   // mantém dados existentes (status, avaliação), adiciona novos, remove desmarcados
   const confs=Array.from(pickerSelected).map(fId=>{
@@ -1010,7 +1013,8 @@ async function confirmarSelecao(){
 async function removerConf(dia,fId){
   if(!currentFDS) return;
   const escala=window._escalas.find(e=>e.id===currentFDS)||{};
-  const novos=(escala[dia]||[]).filter(c=>c.fId!==fId);
+  const toArr=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
+  const novos=toArr(escala[dia]).filter(c=>c.fId!==fId);
   const{db,ref,set}=window._fb;
   await set(ref(db,`escalas/${currentFDS}/${dia}`),novos);
 }
@@ -1105,12 +1109,17 @@ function syncPagFdsSelect(){
     const opt=document.createElement('option');
     opt.value=e.id;opt.textContent=fdsLabel(e);sel.appendChild(opt);
   });
-  if(prev) sel.value=prev;
+  // restore previous or auto-select first FDS if only one exists
+  if(prev && window._escalas.find(e=>e.id===prev)) sel.value=prev;
+  else if(window._escalas.length===1) sel.value=window._escalas[0].id;
 }
 
 window.renderPagamentos=function(){
   syncPagFdsSelect();
   const fdsId=document.getElementById('pagFdsSelect').value;
+  // debug: log to check what we find
+  const _esc=window._escalas.find(e=>e.id===fdsId);
+  console.log('[PAG] fdsId=',fdsId,'escala=',_esc);
   const lista=document.getElementById('pagLista');
   const resumo=document.getElementById('pagResumo');
   const empty=document.getElementById('pagEmpty');
@@ -1118,12 +1127,13 @@ window.renderPagamentos=function(){
 
   const escala=window._escalas.find(e=>e.id===fdsId)||{};
 
-  // agrupar confirmados por freelancer (pode ter trabalhado vários dias)
+  // agrupar por freelancer — suporta array OU objeto (Firebase pode converter)
+  const toArr=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
   const map={};
   DIAS.forEach(dia=>{
-    (escala[dia]||[]).filter(c=>c.status!=='ausente').forEach(c=>{
+    toArr(escala[dia]).filter(c=>c&&c.status!=='ausente').forEach(c=>{
       if(!map[c.fId]) map[c.fId]={fId:c.fId,nome:c.nome,area:c.area,dias:[],pago:false};
-      map[c.fId].dias.push(dia);
+      if(!map[c.fId].dias.includes(dia)) map[c.fId].dias.push(dia);
       if(c.pago) map[c.fId].pago=true;
     });
   });
