@@ -1121,7 +1121,7 @@ window.renderPagamentos=function(){
   // agrupar confirmados por freelancer (pode ter trabalhado vários dias)
   const map={};
   DIAS.forEach(dia=>{
-    (escala[dia]||[]).filter(c=>c.status==='confirmado').forEach(c=>{
+    (escala[dia]||[]).filter(c=>c.status!=='ausente').forEach(c=>{
       if(!map[c.fId]) map[c.fId]={fId:c.fId,nome:c.nome,area:c.area,dias:[],pago:false};
       map[c.fId].dias.push(dia);
       if(c.pago) map[c.fId].pago=true;
@@ -1133,7 +1133,7 @@ window.renderPagamentos=function(){
   Object.keys(map).forEach(fId=>{map[fId].pago=pagamentos[fId]===true;});
 
   const pessoas=Object.values(map);
-  if(!pessoas.length){lista.style.display='none';resumo.style.display='none';empty.style.display='block';empty.querySelector('p').textContent='Nenhum freelancer confirmado neste FDS';return;}
+  if(!pessoas.length){lista.style.display='none';resumo.style.display='none';empty.style.display='block';empty.querySelector('p').textContent='Nenhum freelancer escalado neste FDS. Verifique a aba Escala.';return;}
 
   empty.style.display='none';
   lista.style.display='block';
