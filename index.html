@@ -408,9 +408,10 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 <header>
   <div class="header-inner">
     <div class="logo-wrap">
-      <svg width="30" height="27" viewBox="0 0 40 36" fill="none">
-        <path d="M2 34 L20 3 L38 34" stroke="#b07d2a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M2 34 L14 34" stroke="#b07d2a" stroke-width="2.2" stroke-linecap="round"/>
+      <svg width="32" height="30" viewBox="0 0 54 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="8" y1="43" x2="46" y2="43" stroke="#b07d2a" stroke-width="3.8" stroke-linecap="round"/>
+        <line x1="46" y1="43" x2="30" y2="7" stroke="#b07d2a" stroke-width="3.8" stroke-linecap="round"/>
+        <line x1="8" y1="43" x2="25" y2="11" stroke="#b07d2a" stroke-width="3.8" stroke-linecap="round"/>
       </svg>
       <div>
         <div class="logo-text">AURA</div>
@@ -460,7 +461,7 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
   </div>
   <div id="loadingState" class="loading">
     <svg class="anim-tri" viewBox="0 0 40 36" fill="none">
-      <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none" stroke-dasharray="110" stroke-dashoffset="110">
+      <path d="M8 43 L46 43 L30 7 M8 43 L25 11" stroke="#b07d2a" stroke-width="1.8" fill="none" stroke-dasharray="130" stroke-dashoffset="130">
         <animate attributeName="stroke-dashoffset" from="110" to="0" dur="1.4s" repeatCount="indefinite"/>
       </path>
     </svg>
@@ -469,7 +470,7 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
   <div class="grid" id="grid" style="display:none"></div>
   <div class="empty" id="empty" style="display:none">
     <svg class="anim-tri" viewBox="0 0 40 36" fill="none" style="opacity:.3">
-      <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none"/>
+      <line x1="8" y1="43" x2="46" y2="43" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="46" y1="43" x2="30" y2="7" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="8" y1="43" x2="25" y2="11" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
     <p>Nenhum freelancer encontrado</p>
   </div>
@@ -530,7 +531,7 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 
   <div id="escalaEmpty" class="empty">
     <svg class="anim-tri" viewBox="0 0 40 36" fill="none" style="opacity:.3">
-      <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none"/>
+      <line x1="8" y1="43" x2="46" y2="43" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="46" y1="43" x2="30" y2="7" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="8" y1="43" x2="25" y2="11" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
     <p>Selecione ou crie um final de semana para começar</p>
   </div>
@@ -576,7 +577,7 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 
   <div id="pagEmpty" class="empty">
     <svg class="anim-tri" viewBox="0 0 40 36" fill="none" style="opacity:.3">
-      <path d="M2 34 L20 3 L38 34 Z" stroke="#b07d2a" stroke-width="1.8" fill="none"/>
+      <line x1="8" y1="43" x2="46" y2="43" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="46" y1="43" x2="30" y2="7" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="8" y1="43" x2="25" y2="11" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
     <p>Selecione um final de semana para ver os pagamentos</p>
   </div>
@@ -588,7 +589,7 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 <div class="overlay" id="overlay" onclick="closeOut(event)">
   <div class="modal">
     <div class="modal-top">
-      <svg width="24" viewBox="0 0 40 36" fill="none"><path d="M2 34 L20 3 L38 34" stroke="#b07d2a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M2 34 L13 34" stroke="#b07d2a" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg width="28" height="26" viewBox="0 0 54 50" fill="none"><line x1="8" y1="43" x2="46" y2="43" stroke="#b07d2a" stroke-width="3.8" stroke-linecap="round"/><line x1="46" y1="43" x2="30" y2="7" stroke="#b07d2a" stroke-width="3.8" stroke-linecap="round"/><line x1="8" y1="43" x2="25" y2="11" stroke="#b07d2a" stroke-width="3.8" stroke-linecap="round"/></svg>
       <div><div class="mtitle" id="modalTitle">Novo Freelancer</div><div class="msub">Preencha os dados do profissional</div></div>
     </div>
     <div class="modal-body">
@@ -1332,7 +1333,7 @@ setTimeout(()=>{
 <div class="overlay" id="overlayConfPag" onclick="closeConfPagOut(event)">
   <div class="modal" style="max-width:400px">
     <div class="modal-top">
-      <svg width="24" viewBox="0 0 40 36" fill="none"><path d="M2 34 L20 3 L38 34" stroke="#b07d2a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M2 34 L13 34" stroke="#b07d2a" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg width="28" height="26" viewBox="0 0 54 50" fill="none"><line x1="8" y1="43" x2="46" y2="43" stroke="#b07d2a" stroke-width="3.8" stroke-linecap="round"/><line x1="46" y1="43" x2="30" y2="7" stroke="#b07d2a" stroke-width="3.8" stroke-linecap="round"/><line x1="8" y1="43" x2="25" y2="11" stroke="#b07d2a" stroke-width="3.8" stroke-linecap="round"/></svg>
       <div><div class="mtitle">Confirmar Pagamento</div><div class="msub">Verifique os dados antes de confirmar</div></div>
     </div>
     <div class="modal-body">
