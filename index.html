@@ -301,6 +301,9 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 .pag-dia-tag{font-size:0.68rem;font-weight:600;padding:2px 9px;border-radius:50px;background:color-mix(in srgb,var(--gold) 10%,transparent);color:var(--gold);border:1px solid rgba(176,125,42,0.25)}
 .btn-pagar{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.04em;text-transform:uppercase;padding:8px 18px;border:none;border-radius:6px;cursor:pointer;transition:all 0.2s;background:var(--verde);color:#fff}
 .btn-pagar:hover{background:#1e9060}
+.pag-desc-row{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,#a02020 5%,transparent);border:1px solid rgba(160,32,32,0.2);border-radius:6px;padding:9px 12px;margin-top:6px}
+.pag-desc-input{background:transparent;border:none;outline:none;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem;color:#a02020;width:100px;text-align:right}
+.pag-desc-input::placeholder{color:rgba(160,32,32,0.35);font-weight:400}
 .btn-estornar{background:transparent;border:1px solid rgba(160,32,32,0.3);color:#a02020;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.72rem;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all 0.2s}
 .btn-estornar:hover{background:rgba(160,32,32,0.08)}
 
@@ -1165,7 +1168,8 @@ window.renderPagamentos=function(){
   pessoas.forEach(p=>{
     const f=window._freelancers.find(x=>x.id===p.fId)||{};
     const valorDia=parseFloat((f.valor||'0').replace(',','.'))||0;
-    const total=valorDia*p.dias.length;
+    const desconto=parseFloat((escala.descontos&&escala.descontos[p.fId])||0)||0;
+    const total=Math.max(0,(valorDia*p.dias.length)-desconto);
     if(p.pago) totalPago+=total; else totalPendente+=total;
   });
   document.getElementById('pagTotalPessoas').textContent=pessoas.length;
@@ -1180,7 +1184,12 @@ window.renderPagamentos=function(){
     const a=AREAS[f.area||p.area]||{};
     const valorDia=parseFloat((f.valor||'0').replace(',','.'))||0;
     const total=valorDia*p.dias.length;
-    const totalFmt='R$ '+total.toLocaleString('pt-BR',{minimumFractionDigits:2});
+    const valorDia2=parseFloat((f.valor||'0').replace(',','.'))||0;
+    const descontoVal=parseFloat((escala.descontos&&escala.descontos[p.fId])||0)||0;
+    const totalBruto=valorDia2*p.dias.length;
+    const totalLiq=Math.max(0,totalBruto-descontoVal);
+    const totalFmt='R$ '+totalLiq.toLocaleString('pt-BR',{minimumFractionDigits:2});
+    const totalBrutoFmt=descontoVal>0?'R$ '+totalBruto.toLocaleString('pt-BR',{minimumFractionDigits:2}):'';
     const pix=f.pix||'Não cadastrado';
     const initials=(f.nome||p.nome||'?').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
     const diasTags=p.dias.map(d=>`<span class="pag-dia-tag">${DLABELS[d]}</span>`).join('');
@@ -1194,8 +1203,9 @@ window.renderPagamentos=function(){
           <div class="pag-dias-list" style="margin-top:5px">${diasTags}</div>
         </div>
         <div class="pag-valor-wrap">
+          ${descontoVal>0?`<div style="font-size:.75rem;color:var(--text-dim);text-decoration:line-through;text-align:right">${totalBrutoFmt}</div>`:''}
           <div class="pag-valor">${totalFmt}</div>
-          <div class="pag-dias">${p.dias.length} dia${p.dias.length>1?'s':''} × R$ ${(f.valor||'0')}</div>
+          <div class="pag-dias">${p.dias.length} dia${p.dias.length>1?'s':''} × R$ ${(f.valor||'0')}${descontoVal>0?' − desc.':''}</div>
         </div>
       </div>
       <div class="pag-card-body">
@@ -1203,6 +1213,14 @@ window.renderPagamentos=function(){
           <span class="pag-pix-label">Pix</span>
           <span class="pag-pix-val${semPix?' style="color:var(--vermelho)"':''}">${pix}</span>
           ${!semPix?`<button class="pag-copy" onclick="copyPix('${pix}',this)">Copiar</button>`:''}
+        </div>
+        <div class="pag-desc-row">
+          <span class="pag-pix-label">Desconto (R$)</span>
+          <input class="pag-desc-input" type="number" min="0" step="0.01"
+            id="desc-${p.fId}"
+            value="${(escala.descontos&&escala.descontos[p.fId])||''}"
+            placeholder="0,00"
+            onchange="salvarDesconto('${fdsId}','${p.fId}',this.value)">
         </div>
       </div>
       <div class="pag-card-foot">
@@ -1219,6 +1237,13 @@ window.renderPagamentos=function(){
     </div>`;
   }).join('');
 };
+
+async function salvarDesconto(fdsId,fId,val){
+  const desc=parseFloat(val)||0;
+  const{db,ref,set}=window._fb;
+  await set(ref(db,`escalas/${fdsId}/descontos/${fId}`),desc);
+  renderPagamentos();
+}
 
 function copyPix(val,btn){
   navigator.clipboard.writeText(val).then(()=>{
