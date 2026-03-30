@@ -665,6 +665,13 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 </div>
 
 <script>
+// Parse valor robusto — aceita "120", "120,00", "R$120", "R$ 120,00"
+function parseValor(v){
+  if(!v) return 0;
+  const s=String(v).replace(/R\$\s*/gi,'').replace(/\./g,'').replace(',','.').trim();
+  return parseFloat(s)||0;
+}
+
 const AREAS={
   cozinha:{label:'Cozinha',icon:'🍳',color:'#b04020'},
   limpeza:{label:'Limpeza',icon:'🧹',color:'#1e6ea0'},
@@ -1167,7 +1174,7 @@ window.renderPagamentos=function(){
   let totalPago=0,totalPendente=0;
   pessoas.forEach(p=>{
     const f=window._freelancers.find(x=>x.id===p.fId)||{};
-    const valorDia=parseFloat((f.valor||'0').replace(',','.'))||0;
+    const valorDia=parseValor(f.valor);
     const desconto=parseFloat((escala.descontos&&escala.descontos[p.fId])||0)||0;
     const total=Math.max(0,(valorDia*p.dias.length)-desconto);
     if(p.pago) totalPago+=total; else totalPendente+=total;
@@ -1182,9 +1189,9 @@ window.renderPagamentos=function(){
   lista.innerHTML=pessoas.map(p=>{
     const f=window._freelancers.find(x=>x.id===p.fId)||{};
     const a=AREAS[f.area||p.area]||{};
-    const valorDia=parseFloat((f.valor||'0').replace(',','.'))||0;
+    const valorDia=parseValor(f.valor);
     const total=valorDia*p.dias.length;
-    const valorDia2=parseFloat((f.valor||'0').replace(',','.'))||0;
+    const valorDia2=parseValor(f.valor);
     const descontoVal=parseFloat((escala.descontos&&escala.descontos[p.fId])||0)||0;
     const totalBruto=valorDia2*p.dias.length;
     const totalLiq=Math.max(0,totalBruto-descontoVal);
@@ -1205,7 +1212,7 @@ window.renderPagamentos=function(){
         <div class="pag-valor-wrap">
           ${descontoVal>0?`<div style="font-size:.75rem;color:var(--text-dim);text-decoration:line-through;text-align:right">${totalBrutoFmt}</div>`:''}
           <div class="pag-valor">${totalFmt}</div>
-          <div class="pag-dias">${p.dias.length} dia${p.dias.length>1?'s':''} × R$ ${(f.valor||'0')}${descontoVal>0?' − desc.':''}</div>
+          <div class="pag-dias">${p.dias.length} dia${p.dias.length>1?'s':''} × R$ ${parseValor(f.valor).toLocaleString('pt-BR',{minimumFractionDigits:2})}${descontoVal>0?' − desc.':''}</div>
         </div>
       </div>
       <div class="pag-card-body">
