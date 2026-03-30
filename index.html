@@ -913,18 +913,27 @@ function openAvalModal(dia,fId){
 function closeAval(){document.getElementById('overlayAval').classList.remove('open');avalModalDia=null;avalModalFId=null;}
 function closeAvalOut(e){if(e.target===document.getElementById('overlayAval'))closeAval();}
 
-document.querySelectorAll('.aval-big-star').forEach(s=>{
-  s.addEventListener('click',()=>{avalModalRating=+s.dataset.v;updateAvalBigStars();});
-  s.addEventListener('mouseenter',()=>{
-    document.querySelectorAll('.aval-big-star').forEach((x,i)=>{x.style.color=i<+s.dataset.v?'#c9913a':'';});
-  });
+// Estrelas do modal de avaliação — registradas após DOM pronto
+document.addEventListener('DOMContentLoaded',()=>{
+  const starsContainer=document.querySelector('.aval-big-stars');
+  if(starsContainer){
+    starsContainer.addEventListener('mouseleave',()=>updateAvalBigStars());
+    starsContainer.addEventListener('click',e=>{
+      const s=e.target.closest('.aval-big-star');
+      if(s){avalModalRating=+s.dataset.v;updateAvalBigStars();}
+    });
+    starsContainer.addEventListener('mouseover',e=>{
+      const s=e.target.closest('.aval-big-star');
+      if(s) document.querySelectorAll('.aval-big-star').forEach((x,i)=>{x.style.color=i<+s.dataset.v?'#c9913a':'';});
+    });
+  }
 });
-document.querySelector('.aval-big-stars').addEventListener('mouseleave',()=>updateAvalBigStars());
 
 const RATING_LABELS=['','Ruim','Regular','Bom','Muito bom','Excelente!'];
 function updateAvalBigStars(){
   document.querySelectorAll('.aval-big-star').forEach((x,i)=>{x.classList.toggle('on',i<avalModalRating);x.style.color='';});
-  document.getElementById('avalRatingText').textContent=RATING_LABELS[avalModalRating]||'Clique para avaliar';
+  const rt=document.getElementById('avalRatingText');
+  if(rt) rt.textContent=RATING_LABELS[avalModalRating]||'Clique para avaliar';
 }
 
 async function salvarAvalModal(){
