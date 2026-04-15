@@ -268,6 +268,55 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 .add-day-btn:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,transparent)}
 .add-day-btn.vazio{opacity:0.55}
 
+
+/* ══ CALENDÁRIO ══ */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.cal-nav{display:flex;align-items:center;gap:12px}
+.cal-month-label{font-family:'Outfit',sans-serif;font-weight:600;font-size:1.1rem;color:var(--text);min-width:160px}
+.cal-nav-btn{background:transparent;border:1px solid var(--border2);border-radius:6px;width:36px;height:36px;cursor:pointer;color:var(--text-dim);font-size:1.1rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+
+.cal-layout{display:grid;grid-template-columns:1fr;gap:20px;align-items:start}
+.cal-layout.panel-open{grid-template-columns:1fr 340px}
+.cal-grid-wrap{min-width:0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-evento-pill{font-size:0.62rem;font-weight:600;background:color-mix(in srgb,var(--gold) 15%,transparent);color:var(--gold);border-radius:4px;padding:2px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-pessoas-count{font-size:0.65rem;color:var(--text-dim);margin-top:auto}
+
+/* Painel lateral */
+.dia-panel{background:var(--card);border:1px solid var(--border2);border-radius:12px;overflow:hidden;position:sticky;top:90px}
+.dia-panel-top{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border2);background:color-mix(in srgb,var(--gold) 5%,transparent)}
+.dia-panel-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;color:var(--text);text-transform:capitalize}
+.dia-panel-sub{font-size:0.75rem;color:var(--text-dim);margin-top:3px}
+.dia-panel-close{background:transparent;border:none;cursor:pointer;font-size:1rem;color:var(--text-dim);padding:2px 6px;border-radius:4px;transition:color 0.2s}
+.dia-panel-close:hover{color:var(--vermelho)}
+.dia-panel-body{padding:14px;max-height:calc(100vh - 300px);overflow-y:auto}
+
+/* Cards dentro do painel */
+.painel-evento-section{margin-bottom:16px}
+.painel-evento-tag{font-size:0.7rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.painel-pessoa-card{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--border2);border-radius:7px;background:var(--bg2);margin-bottom:6px}
+.painel-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.72rem;color:#fff;flex-shrink:0}
+.painel-pessoa-nome{font-weight:600;font-size:0.85rem}
+.painel-pessoa-area{font-size:0.72rem;color:var(--text-dim)}
+.painel-status{font-size:0.65rem;font-weight:600;padding:2px 7px;border-radius:50px;margin-left:auto;white-space:nowrap}
+.st-confirmado{background:color-mix(in srgb,var(--verde) 12%,transparent);color:var(--verde)}
+.st-pendente{background:color-mix(in srgb,var(--laranja) 12%,transparent);color:var(--laranja)}
+.st-ausente{background:color-mix(in srgb,var(--vermelho) 12%,transparent);color:var(--vermelho)}
+.dia-painel-add{width:100%;padding:9px;border:1px dashed var(--border);border-radius:7px;background:transparent;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;transition:all 0.2s;margin-top:8px;font-weight:500}
+.dia-painel-add:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 5%,transparent)}
+.dia-painel-empty{text-align:center;padding:32px 0;color:var(--text-dim);font-size:0.8rem}
+.dia-painel-link{font-size:0.72rem;font-weight:600;color:var(--gold);text-decoration:none;cursor:pointer;background:none;border:none;padding:0}
+.dia-painel-link:hover{text-decoration:underline}
+
+@media(max-width:900px){
+  .cal-layout.panel-open{grid-template-columns:1fr}
+  .dia-panel{position:fixed;bottom:0;left:0;right:0;border-radius:16px 16px 0 0;z-index:150;max-height:70vh}
+  .dia-panel-body{max-height:calc(70vh - 100px)}
+  .cal-day{min-height:56px;padding:6px}
+  .cal-weekday{font-size:0.62rem;padding:6px 2px}
+  .cal-day-num{font-size:0.75rem}
+  .cal-evento-pill{display:none}
+}
 /* ── FAB (botão flutuante mobile) ── */
 .fab{display:none;position:fixed;bottom:24px;right:20px;z-index:90;width:56px;height:56px;border-radius:50%;background:var(--gold);color:#fff;border:none;font-size:1.5rem;box-shadow:0 4px 20px rgba(176,125,42,0.4);cursor:pointer;align-items:center;justify-content:center;transition:transform 0.2s,background 0.2s}
 .fab:hover{background:var(--gold-light);transform:scale(1.08)}
@@ -331,10 +380,7 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 }
 
 /* ══ CALENDÁRIO ══ */
-.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.cal-nav{display:flex;align-items:center;gap:16px}
 .cal-month-label{font-family:'Outfit',sans-serif;font-weight:600;font-size:1.2rem;color:var(--text);min-width:180px;text-align:center}
-.cal-nav-btn{background:transparent;border:1px solid var(--border2);border-radius:6px;width:36px;height:36px;cursor:pointer;color:var(--text-dim);font-size:1rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
 .cal-nav-btn:hover{border-color:var(--gold);color:var(--gold)}
 .cal-new-btn{margin-left:auto}
 
@@ -358,8 +404,7 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 .cal-pessoas-count{font-size:0.68rem;color:var(--text-dim);margin-top:auto}
 
 /* Painel lateral do dia */
-.cal-layout{display:grid;grid-template-columns:1fr;gap:20px;transition:all 0.3s}
-.cal-layout.com-painel{grid-template-columns:1fr 340px}
+
 
 .dia-painel{background:var(--card);border:1px solid var(--border2);border-radius:10px;overflow:hidden;position:sticky;top:100px;max-height:calc(100vh - 120px);display:flex;flex-direction:column}
 .dia-painel-header{padding:18px 20px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--bg2)}
@@ -393,7 +438,6 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 .pconf-status.ausente{background:color-mix(in srgb,var(--vermelho) 12%,transparent);color:var(--vermelho)}
 
 @media(max-width:900px){
-  .cal-layout.com-painel{grid-template-columns:1fr}
   .dia-painel{position:fixed;bottom:0;left:0;right:0;border-radius:16px 16px 0 0;max-height:70vh;z-index:150}
   .cal-day{min-height:56px;padding:6px}
   .cal-evento-pill{display:none}
@@ -559,34 +603,35 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 
 <!-- ══ TAB ESCALA ══ -->
 <div class="tab-panel" id="tab-escala">
-  <div class="escala-top">
-    <div>
-      <div class="escala-title">Escala de Eventos</div>
-      <div class="escala-sub">Confirme presenças e avalie o desempenho</div>
+
+  <!-- Cabeçalho: mês + botão novo evento -->
+  <div class="cal-header">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="mudarMes(-1)">‹</button>
+      <div class="cal-month-label" id="calMonthLabel">Abril 2026</div>
+      <button class="cal-nav-btn" onclick="mudarMes(1)">›</button>
     </div>
-    <div class="fds-selector">
-      <select id="fdsSelect" onchange="selectFDSFromDropdown()">
-        <option value="">Selecione um evento…</option>
-      </select>
-      <button class="btn btn-outline btn-sm" onclick="openNovoFDS()">+ Novo evento</button>
+    <button class="btn btn-gold btn-sm" onclick="openNovoFDS()">+ Novo evento</button>
+  </div>
+
+  <!-- Layout: calendário + painel lateral -->
+  <div class="cal-layout" id="calLayout">
+    <div class="cal-grid-wrap">
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <!-- Painel lateral (oculto até clicar num dia) -->
+    <div class="dia-panel" id="diaPanel" style="display:none">
+      <div class="dia-panel-top">
+        <div>
+          <div class="dia-panel-title" id="diaPanelTitle">—</div>
+          <div class="dia-panel-sub" id="diaPanelSub"></div>
+        </div>
+        <button class="dia-panel-close" onclick="fecharPainel()">✕</button>
+      </div>
+      <div class="dia-panel-body" id="diaPanelBody"></div>
     </div>
   </div>
 
-  <div class="area-resumo" id="areaResumo" style="display:none"></div>
-
-  <div class="dias-grid" id="diasGrid" style="display:none"></div>
-
-  <div id="escalaEmpty" class="empty">
-    <svg class="anim-tri" viewBox="0 0 40 36" fill="none" style="opacity:.3">
-      <line x1="8" y1="43" x2="46" y2="43" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="46" y1="43" x2="30" y2="7" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="8" y1="43" x2="25" y2="11" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>
-    <p>Selecione ou crie um evento para começar</p>
-  </div>
-
-  <div class="hist-section" id="histSection" style="display:none">
-    <div class="hist-title">📋 Histórico de Finais de Semana</div>
-    <div class="hist-grid" id="histGrid"></div>
-  </div>
 </div>
 
 <!-- ══ TAB PAGAMENTOS ══ -->
@@ -1024,7 +1069,7 @@ function abrirDia(key, scroll=true){
 
   panel.style.display='flex';
   panel.style.flexDirection='column';
-  layout.classList.add('com-painel');
+  layout.classList.add('panel-open');
 
   // mover painel para dentro do layout se ainda não estiver
   if(!layout.contains(panel)) layout.appendChild(panel);
@@ -1037,7 +1082,7 @@ function abrirDia(key, scroll=true){
 function fecharPainel(){
   diaSelecionado=null;
   document.getElementById('diaPanel').style.display='none';
-  document.getElementById('calLayout').classList.remove('com-painel');
+  document.getElementById('calLayout').classList.remove('panel-open');
   renderCalendario();
 }
 
