@@ -262,6 +262,12 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 .ac-producao{--ac:var(--producao)}.pc-producao{--pc:var(--producao)}
 
 
+/* ── ADD DAY BAR ── */
+.add-day-bar{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 4px;border-top:1px solid var(--border2);margin-top:4px}
+.add-day-btn{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;padding:6px 14px;border-radius:50px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.2s}
+.add-day-btn:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.add-day-btn.vazio{opacity:0.55}
+
 /* ── FAB (botão flutuante mobile) ── */
 .fab{display:none;position:fixed;bottom:24px;right:20px;z-index:90;width:56px;height:56px;border-radius:50%;background:var(--gold);color:#fff;border:none;font-size:1.5rem;box-shadow:0 4px 20px rgba(176,125,42,0.4);cursor:pointer;align-items:center;justify-content:center;transition:transform 0.2s,background 0.2s}
 .fab:hover{background:var(--gold-light);transform:scale(1.08)}
@@ -432,7 +438,7 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 <div class="tabs-bar">
   <div class="tabs-inner">
     <button class="tab-btn active" onclick="switchTab('freelancers',this)">👥 Freelancers</button>
-    <button class="tab-btn" onclick="switchTab('escala',this)">📅 Escala do FDS</button>
+    <button class="tab-btn" onclick="switchTab('escala',this)">📅 Escala</button>
     <button class="tab-btn" onclick="switchTab('pagamentos',this)">💰 Pagamentos</button>
   </div>
 </div>
@@ -480,60 +486,26 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 <div class="tab-panel" id="tab-escala">
   <div class="escala-top">
     <div>
-      <div class="escala-title">Escala do Final de Semana</div>
-      <div class="escala-sub">Confirme presenças e avalie o desempenho após o turno</div>
+      <div class="escala-title">Escala de Eventos</div>
+      <div class="escala-sub">Confirme presenças e avalie o desempenho</div>
     </div>
     <div class="fds-selector">
       <select id="fdsSelect" onchange="selectFDSFromDropdown()">
-        <option value="">Selecione um FDS…</option>
+        <option value="">Selecione um evento…</option>
       </select>
-      <button class="btn btn-outline btn-sm" onclick="openNovoFDS()">+ Novo FDS</button>
+      <button class="btn btn-outline btn-sm" onclick="openNovoFDS()">+ Novo evento</button>
     </div>
   </div>
 
   <div class="area-resumo" id="areaResumo" style="display:none"></div>
 
-  <div class="dias-grid" id="diasGrid" style="display:none">
-    <div class="dia-col dia-sexta">
-      <div class="dia-header">
-        <span class="dia-label">Sexta-feira</span>
-        <div class="dia-counts">
-          <span class="dia-count cnt-conf" id="cconf-sexta">0 ✓</span>
-          <span class="dia-count cnt-total" id="ctot-sexta">0</span>
-        </div>
-      </div>
-      <div class="dia-body" id="dia-sexta"></div>
-      <div style="padding:0 10px 10px"><button class="dia-add" onclick="openAddConf('sexta')">+ Adicionar profissional</button></div>
-    </div>
-    <div class="dia-col dia-sabado">
-      <div class="dia-header">
-        <span class="dia-label">Sábado</span>
-        <div class="dia-counts">
-          <span class="dia-count cnt-conf" id="cconf-sabado">0 ✓</span>
-          <span class="dia-count cnt-total" id="ctot-sabado">0</span>
-        </div>
-      </div>
-      <div class="dia-body" id="dia-sabado"></div>
-      <div style="padding:0 10px 10px"><button class="dia-add" onclick="openAddConf('sabado')">+ Adicionar profissional</button></div>
-    </div>
-    <div class="dia-col dia-domingo">
-      <div class="dia-header">
-        <span class="dia-label">Domingo</span>
-        <div class="dia-counts">
-          <span class="dia-count cnt-conf" id="cconf-domingo">0 ✓</span>
-          <span class="dia-count cnt-total" id="ctot-domingo">0</span>
-        </div>
-      </div>
-      <div class="dia-body" id="dia-domingo"></div>
-      <div style="padding:0 10px 10px"><button class="dia-add" onclick="openAddConf('domingo')">+ Adicionar profissional</button></div>
-    </div>
-  </div>
+  <div class="dias-grid" id="diasGrid" style="display:none"></div>
 
   <div id="escalaEmpty" class="empty">
     <svg class="anim-tri" viewBox="0 0 40 36" fill="none" style="opacity:.3">
       <line x1="8" y1="43" x2="46" y2="43" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="46" y1="43" x2="30" y2="7" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/><line x1="8" y1="43" x2="25" y2="11" stroke="#b07d2a" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
-    <p>Selecione ou crie um final de semana para começar</p>
+    <p>Selecione ou crie um evento para começar</p>
   </div>
 
   <div class="hist-section" id="histSection" style="display:none">
@@ -547,11 +519,11 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
   <div class="pag-top">
     <div>
       <div class="escala-title">Pagamentos</div>
-      <div class="escala-sub">Freelancers que trabalharam e aguardam pagamento</div>
+      <div class="escala-sub">Gerencie pagamentos por evento</div>
     </div>
     <div class="fds-selector">
       <select id="pagFdsSelect" onchange="renderPagamentos()">
-        <option value="">Selecione um FDS…</option>
+        <option value="">Selecione um evento…</option>
       </select>
     </div>
   </div>
@@ -636,16 +608,17 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 <!-- ══ MODAL NOVO FDS ══ -->
 <div class="overlay" id="overlayFDS" onclick="closeFDSOut(event)">
   <div class="modal" style="max-width:400px">
-    <div class="modal-top"><div><div class="mtitle">Novo Final de Semana</div><div class="msub">Defina o período</div></div></div>
+    <div class="modal-top"><div><div class="mtitle">Novo Evento</div><div class="msub">Defina os dias e a data de início</div></div></div>
     <div class="modal-body">
       <div class="gr2">
-        <div class="fg"><label>Data da Sexta *</label><input type="date" id="fds_sexta"></div>
-        <div class="fg"><label>Observação</label><input type="text" id="fds_obs" placeholder="Ex: Aniversário Aura"></div>
+        <div class="fg"><label>Data de início *</label><input type="date" id="fds_sexta"></div>
+        <div class="fg"><label>Observação</label><input type="text" id="fds_obs" placeholder="Ex: Evento MED T40"></div>
       </div>
+      <p style="font-size:0.8rem;color:var(--text-dim);margin-top:4px;line-height:1.5">Todos os dias da semana estarão disponíveis. As colunas aparecem automaticamente quando você adicionar freelas em cada dia.</p>
     </div>
     <div class="modal-foot">
       <button class="btn btn-outline" onclick="closeFDS()">Cancelar</button>
-      <button class="btn btn-gold" onclick="salvarFDS()">Criar FDS</button>
+      <button class="btn btn-gold" onclick="salvarFDS()">Criar evento</button>
     </div>
   </div>
 </div>
@@ -682,7 +655,9 @@ const AREAS={
   seguranca:{label:'Segurança',icon:'🛡',color:'#a02020'},
   producao:{label:'Recepcionista',icon:'🤝',color:'#1e58a0'},
 };
-const DIAS=['sexta','sabado','domingo'];
+const DIAS=['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
+const DIA_LABELS={segunda:'Segunda',terca:'Terça',quarta:'Quarta',quinta:'Quinta',sexta:'Sexta-feira',sabado:'Sábado',domingo:'Domingo'};
+const DIA_SHORT={segunda:'Seg',terca:'Ter',quarta:'Qua',quinta:'Qui',sexta:'Sexta',sabado:'Sábado',domingo:'Domingo'};
 
 window._freelancers=[];
 window._escalas=[];
@@ -787,7 +762,7 @@ window.renderEscala=function(){
   syncPagFdsSelect();
   const sel=document.getElementById('fdsSelect');
   const prev=sel.value;
-  sel.innerHTML='<option value="">Selecione um FDS…</option>';
+  sel.innerHTML='<option value="">Selecione um evento…</option>';
   window._escalas.forEach(e=>{
     const opt=document.createElement('option');
     opt.value=e.id;opt.textContent=fdsLabel(e);sel.appendChild(opt);
@@ -799,10 +774,41 @@ window.renderEscala=function(){
   const escala=window._escalas.find(e=>e.id===currentFDS);
   if(!escala){showEscalaEmpty();return;}
   document.getElementById('escalaEmpty').style.display='none';
-  document.getElementById('diasGrid').style.display='grid';
   document.getElementById('areaResumo').style.display='grid';
 
-  DIAS.forEach(dia=>{
+  // mostrar apenas dias com freelas + botão para adicionar em qualquer dia
+  const toArr2=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
+  const diasComFreelas=DIAS.filter(d=>toArr2(escala[d]).length>0);
+  const diasAtivos=diasComFreelas; // alias para código abaixo
+
+  const diaColors={segunda:'#1e6ea0',terca:'#6a1ea0',quarta:'#167a50',quinta:'#9a7018',sexta:'#9a7018',sabado:'#b07d2a',domingo:'#b04020'};
+
+  const diasGridEl=document.getElementById('diasGrid');
+  diasGridEl.style.display='grid';
+  const cols=Math.max(1,diasComFreelas.length);
+  diasGridEl.style.gridTemplateColumns=cols<=2?'repeat(2,1fr)':cols===3?'repeat(3,1fr)':'repeat(auto-fill,minmax(280px,1fr))';
+
+  // linha de botões para adicionar em qualquer dia (todos os 7 dias)
+  const addDayBar=`<div class="add-day-bar">
+    ${DIAS.map(d=>`<button class="add-day-btn${diasComFreelas.includes(d)?'':' vazio'}" onclick="openAddConf('${d}')">${DIA_SHORT[d]}</button>`).join('')}
+  </div>`;
+
+  diasGridEl.innerHTML=diasComFreelas.map(dia=>`
+    <div class="dia-col" style="border-top:3px solid ${diaColors[dia]||'var(--gold)'}">
+      <div class="dia-header" style="background:color-mix(in srgb,${diaColors[dia]||'var(--gold)'} 5%,transparent)">
+        <span class="dia-label">${DIA_LABELS[dia]||dia}</span>
+        <div class="dia-counts">
+          <span class="dia-count cnt-conf" id="cconf-${dia}">0 ✓</span>
+          <span class="dia-count cnt-total" id="ctot-${dia}">0 total</span>
+        </div>
+      </div>
+      <div class="dia-body" id="dia-${dia}"></div>
+      <div style="padding:0 10px 10px"><button class="dia-add" onclick="openAddConf('${dia}')">+ Adicionar profissional</button></div>
+    </div>`).join('')
+    + (diasComFreelas.length===0?'':'')
+    + `<div style="grid-column:1/-1">${addDayBar}</div>`;
+
+  DIAS.filter(d=>diasComFreelas.includes(d)).forEach(dia=>{
     const toArr=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
     const confs=toArr(escala[dia]);
     const nConf=confs.filter(c=>c.status==='confirmado').length;
@@ -842,7 +848,7 @@ window.renderEscala=function(){
   });
 
   // resumo por área (total confirmados)
-  const todosConf=DIAS.flatMap(d=>(escala[d]||[]).filter(c=>c.status==='confirmado'));
+  const todosConf=DIAS.flatMap(d=>toArr(escala[d]).filter(c=>c&&c.status==='confirmado'));
   const areaCount={};
   todosConf.forEach(c=>{const f=window._freelancers.find(x=>x.id===c.fId)||{};const area=f.area||c.area||'?';areaCount[area]=(areaCount[area]||0)+1;});
   document.getElementById('areaResumo').innerHTML=Object.entries(AREAS).map(([k,v])=>`
@@ -862,12 +868,17 @@ function showEscalaEmpty(){
 }
 
 function fdsLabel(e){
-  if(!e.dataInicio) return 'FDS sem data';
+  if(!e.dataInicio) return 'Evento sem data';
+  const dias=e.dias||['sexta','sabado','domingo'];
   const d=new Date(e.dataInicio+'T12:00:00');
-  const sexta=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-  const dom=new Date(d);dom.setDate(d.getDate()+2);
-  const domingo=dom.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-  return `${sexta} – ${domingo}${e.obs?' · '+e.obs:''}`;
+  const inicio=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+  // calcular data final baseado nos dias selecionados
+  const DIAS_ORDER=['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
+  const maxOffset=Math.max(...dias.map(d2=>DIAS_ORDER.indexOf(d2)))-DIAS_ORDER.indexOf(dias[0]);
+  const fim=new Date(d);fim.setDate(d.getDate()+Math.max(0,maxOffset));
+  const fimStr=fim.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+  const label=inicio===fimStr?inicio:`${inicio} – ${fimStr}`;
+  return `${label}${e.obs?' · '+e.obs:''}`;
 }
 
 function renderHistorico(){
@@ -876,8 +887,8 @@ function renderHistorico(){
   if(!hist.length){sec.style.display='none';return;}
   sec.style.display='block';
   document.getElementById('histGrid').innerHTML=hist.map(e=>{
-    const total=DIAS.reduce((s,d)=>s+(e[d]||[]).length,0);
-    const conf=DIAS.reduce((s,d)=>s+(e[d]||[]).filter(c=>c.status==='confirmado').length,0);
+    const _dias1=e.dias||['sexta','sabado','domingo'];const total=_dias1.reduce((s,d)=>s+toArr(e[d]).length,0);
+    const _dias2=e.dias||['sexta','sabado','domingo'];const conf=_dias2.reduce((s,d)=>s+toArr(e[d]).filter(c=>c.status==='confirmado').length,0);
     const areas=[...new Set(DIAS.flatMap(d=>(e[d]||[]).map(c=>{const f=window._freelancers.find(x=>x.id===c.fId)||{};return f.area||c.area;})))].filter(Boolean);
     return `<div class="hist-card${currentFDS===e.id?' selected':''}" onclick="selectFDS('${e.id}')">
       <div class="hist-date">${fdsLabel(e)}</div>
@@ -965,11 +976,7 @@ async function salvarAvalModal(){
 // ── NOVO FDS ─────────────────────────────────────────────────
 function openNovoFDS(){
   const hoje=new Date();
-  const dd=hoje.getDay();
-  const diasParaSexta=dd<=5?(5-dd):(12-dd);
-  const proxSexta=new Date(hoje);
-  proxSexta.setDate(hoje.getDate()+diasParaSexta);
-  document.getElementById('fds_sexta').value=proxSexta.toISOString().slice(0,10);
+  document.getElementById('fds_sexta').value=hoje.toISOString().slice(0,10);
   document.getElementById('fds_obs').value='';
   document.getElementById('overlayFDS').classList.add('open');
 }
@@ -977,10 +984,13 @@ function closeFDS(){document.getElementById('overlayFDS').classList.remove('open
 function closeFDSOut(e){if(e.target===document.getElementById('overlayFDS'))closeFDS();}
 async function salvarFDS(){
   const data=document.getElementById('fds_sexta').value;
-  if(!data){alert('Selecione a data da sexta-feira.');return;}
+  if(!data){alert('Selecione a data de início.');return;}
   const obs=document.getElementById('fds_obs').value.trim();
   const{db,ref,push,escalaRef}=window._fb;
-  const res=await push(escalaRef,{dataInicio:data,obs,sexta:[],sabado:[],domingo:[],criadoEm:Date.now()});
+  const res=await push(escalaRef,{
+    dataInicio:data,obs,criadoEm:Date.now(),
+    segunda:[],terca:[],quarta:[],quinta:[],sexta:[],sabado:[],domingo:[]
+  });
   currentFDS=res.key;
   closeFDS();
 }
@@ -1124,7 +1134,7 @@ function exportCSV(){
 function syncPagFdsSelect(){
   const sel=document.getElementById('pagFdsSelect');
   const prev=sel.value;
-  sel.innerHTML='<option value="">Selecione um FDS…</option>';
+  sel.innerHTML='<option value="">Selecione um evento…</option>';
   window._escalas.forEach(e=>{
     const opt=document.createElement('option');
     opt.value=e.id;opt.textContent=fdsLabel(e);sel.appendChild(opt);
@@ -1169,7 +1179,7 @@ window.renderPagamentos=function(){
   lista.style.display='block';
   resumo.style.display='grid';
 
-  const DLABELS={sexta:'Sexta',sabado:'Sábado',domingo:'Domingo'};
+  // DIA_SHORT defined globally
 
   // calcular totais
   let totalPago=0,totalPendente=0;
@@ -1200,7 +1210,7 @@ window.renderPagamentos=function(){
     const totalBrutoFmt=descontoVal>0?'R$ '+totalBruto.toLocaleString('pt-BR',{minimumFractionDigits:2}):'';
     const pix=f.pix||'Não cadastrado';
     const initials=(f.nome||p.nome||'?').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
-    const diasTags=p.dias.map(d=>`<span class="pag-dia-tag">${DLABELS[d]}</span>`).join('');
+    const diasTags=p.dias.map(d=>`<span class="pag-dia-tag">${DIA_SHORT[d]||d}</span>`).join('');
     const semPix=!f.pix;
     return `<div class="pag-card${p.pago?' pago':''} ac-${f.area||p.area}">
       <div class="pag-card-top">
