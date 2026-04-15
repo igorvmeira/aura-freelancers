@@ -943,9 +943,18 @@ function buildMapaEventos(){
   window._escalas.forEach(esc=>{
     if(!esc.dataInicio) return;
     const baseDate=new Date(esc.dataInicio+'T12:00:00');
-    const baseDow=baseDate.getDay(); // 0=dom
-    const baseDowMap={0:6,1:0,2:1,3:2,4:3,5:4,6:5}; // seg=0
+    const baseDow=baseDate.getDay();
+    const baseDowMap={0:6,1:0,2:1,3:2,4:3,5:4,6:5};
     const baseOffset=baseDowMap[baseDow];
+
+    // sempre indexar o dataInicio do evento (mesmo sem freelas)
+    const keyInicio=esc.dataInicio;
+    if(!mapa[keyInicio]) mapa[keyInicio]=[];
+    // só adicionar marcador se ainda não tiver entrada deste evento neste dia
+    const jaExiste=mapa[keyInicio].some(e=>e.escalaId===esc.id&&e.dia==='_inicio');
+    if(!jaExiste) mapa[keyInicio].push({escalaId:esc.id,obs:esc.obs||'',dia:'_inicio',confs:[],dataInicio:esc.dataInicio,esc,marcador:true});
+
+    // dias com freelas
     DIAS.forEach(dia=>{
       const confs=toArr(esc[dia]);
       if(!confs.length) return;
@@ -954,6 +963,9 @@ function buildMapaEventos(){
       dataDia.setDate(baseDate.getDate()+diff);
       const key=dataDia.toISOString().slice(0,10);
       if(!mapa[key]) mapa[key]=[];
+      // remover marcador vazio se agora tem freelas neste mesmo dia+evento
+      const idx=mapa[key].findIndex(e=>e.escalaId===esc.id&&e.marcador);
+      if(idx>=0) mapa[key].splice(idx,1);
       mapa[key].push({escalaId:esc.id,obs:esc.obs||'',dia,confs,dataInicio:esc.dataInicio,esc});
     });
   });
@@ -1067,24 +1079,47 @@ function renderPainel(key){
         <p>Nenhum freela escalado</p>
       </div>`;
   } else {
-    body.innerHTML=eventos.map(({esc,dia,confs})=>{
-      const cards=confs.map(c=>{
-        const f=window._freelancers.find(x=>x.id===c.fId)||{};
-        const a=AREAS[f.area||c.area]||{};
-        const initials=(f.nome||c.nome||'?').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
-        const status=c.status||'pendente';
-        return `<div class="pconf-card ${status} ac-${f.area||c.area}">
-          <div class="pconf-avatar-sm" style="background:${a.color||'var(--gold)'}">${initials}</div>
-          <div class="pconf-info">
-            <div class="pconf-nome">${f.nome||c.nome}</div>
-            <div class="pconf-area">${a.label||c.area||'—'}</div>
-          </div>
-          <span class="pconf-status ${status}">${status==='confirmado'?'✓':status==='ausente'?'✗':'⏳'}</span>
-        </div>`;
-      }).join('');
+    // agrupar por escalaId para não duplicar evento
+    const eventosPorId={};
+    eventos.forEach(e=>{
+      if(!eventosPorId[e.escalaId]) eventosPorId[e.escalaId]={esc:e.esc,entradas:[]};
+      if(!e.marcador) eventosPorId[e.escalaId].entradas.push(e);
+    });
+
+    body.innerHTML=Object.values(eventosPorId).map(({esc,entradas})=>{
+      // descobrir qual dia mapeia para esta data
+      const baseDate=new Date(esc.dataInicio+'T12:00:00');
+      const baseDow=baseDate.getDay();
+      const baseDowMap={0:6,1:0,2:1,3:2,4:3,5:4,6:5};
+      const baseOffset=baseDowMap[baseDow];
+      // dia mais próximo para adicionar
+      const [y,m,d2]=key.split('-').map(Number);
+      const dataDia=new Date(y,m-1,d2);
+      const dow=dataDia.getDay();
+      const dowMon={0:6,1:0,2:1,3:2,4:3,5:4,6:5}[dow];
+      const diaKey=DIAS[dowMon]||'sexta';
+
+      const cards=entradas.flatMap(({dia,confs})=>
+        confs.map(c=>{
+          const f=window._freelancers.find(x=>x.id===c.fId)||{};
+          const a=AREAS[f.area||c.area]||{};
+          const initials=(f.nome||c.nome||'?').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
+          const status=c.status||'pendente';
+          return `<div class="pconf-card ${status} ac-${f.area||c.area}">
+            <div class="pconf-avatar-sm" style="background:${a.color||'var(--gold)'}">${initials}</div>
+            <div class="pconf-info">
+              <div class="pconf-nome">${f.nome||c.nome}</div>
+              <div class="pconf-area">${a.label||c.area||'—'}</div>
+            </div>
+            <span class="pconf-status ${status}">${status==='confirmado'?'✓':status==='ausente'?'✗':'⏳'}</span>
+          </div>`;
+        })
+      ).join('');
+
+      const semFreelas=entradas.length===0||entradas.every(e=>e.confs.length===0);
       return `<div class="painel-evento-tag">📅 ${esc.obs||fdsLabel(esc)}</div>
-        <button class="dia-painel-add" onclick="currentFDS='${esc.id}';openAddConf('${dia}')">+ Adicionar neste dia</button>
-        ${cards}`;
+        <button class="dia-painel-add" onclick="currentFDS='${esc.id}';openAddConf('${diaKey}')">+ Adicionar freela neste dia</button>
+        ${semFreelas?`<div style="font-size:.78rem;color:var(--text-dim);text-align:center;padding:12px 0">Nenhum freela ainda — clique acima para adicionar</div>`:cards}`;
     }).join('<div style="height:12px"></div>');
   }
 }
@@ -1101,6 +1136,8 @@ function fecharPainel(){
 function openNovoFDSNoDia(key){
   document.getElementById('fds_sexta').value=key;
   document.getElementById('fds_obs').value='';
+  // guardar o dia clicado para abrir após criar
+  window._pendingOpenDay=key;
   document.getElementById('overlayFDS').classList.add('open');
 }
 
@@ -1217,6 +1254,7 @@ function openNovoFDS(){
   const hoje=new Date();
   document.getElementById('fds_sexta').value=hoje.toISOString().slice(0,10);
   document.getElementById('fds_obs').value='';
+  window._pendingOpenDay=null;
   document.getElementById('overlayFDS').classList.add('open');
 }
 function closeFDS(){document.getElementById('overlayFDS').classList.remove('open');}
@@ -1232,6 +1270,12 @@ async function salvarFDS(){
   });
   currentFDS=res.key;
   closeFDS();
+  // navegar para o mês do evento e abrir o dia
+  const openDay=window._pendingOpenDay||data;
+  const [y,m]=openDay.split('-').map(Number);
+  calAno=y; calMes=m-1;
+  window._pendingOpenDay=null;
+  setTimeout(()=>{ _mapaEventos=null; abrirDia(openDay); },600);
 }
 
 // ── ADICIONAR À ESCALA ───────────────────────────────────────
