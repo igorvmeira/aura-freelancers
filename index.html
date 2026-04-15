@@ -880,79 +880,60 @@ function setFilter(el,area){
 // ── RENDER ESCALA ───────────────────────────────────────────
 // ── CALENDÁRIO ─────────────────────────────────────────────
 let calAno=new Date().getFullYear();
-let calMes=new Date().getMonth(); // 0-based
-let diaSelecionado=null; // 'YYYY-MM-DD'
+let calMes=new Date().getMonth();
+let diaSelecionado=null;
+let _mapaEventos=null; // cache
+
+const DIAS_OFFSET={segunda:0,terca:1,quarta:2,quinta:3,sexta:4,sabado:5,domingo:6};
+const DIAS_ORDER=['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
+
+function toArr(v){return !v?[]:Array.isArray(v)?v:Object.values(v);}
+
+function buildMapaEventos(){
+  const mapa={};
+  window._escalas.forEach(esc=>{
+    if(!esc.dataInicio) return;
+    const baseDate=new Date(esc.dataInicio+'T12:00:00');
+    const baseDow=baseDate.getDay(); // 0=dom
+    const baseDowMap={0:6,1:0,2:1,3:2,4:3,5:4,6:5}; // seg=0
+    const baseOffset=baseDowMap[baseDow];
+    DIAS.forEach(dia=>{
+      const confs=toArr(esc[dia]);
+      if(!confs.length) return;
+      const diff=DIAS_OFFSET[dia]-baseOffset;
+      const dataDia=new Date(baseDate);
+      dataDia.setDate(baseDate.getDate()+diff);
+      const key=dataDia.toISOString().slice(0,10);
+      if(!mapa[key]) mapa[key]=[];
+      mapa[key].push({escalaId:esc.id,obs:esc.obs||'',dia,confs,dataInicio:esc.dataInicio,esc});
+    });
+  });
+  return mapa;
+}
 
 window.renderEscala=function(){
   syncPagFdsSelect();
+  _mapaEventos=buildMapaEventos(); // rebuild cache on data change
   renderCalendario();
 };
 
 function renderCalendario(){
+  if(!_mapaEventos) _mapaEventos=buildMapaEventos();
   const hoje=new Date();
   const mesLabel=new Date(calAno,calMes,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
   document.getElementById('calMonthLabel').textContent=mesLabel.charAt(0).toUpperCase()+mesLabel.slice(1);
 
-  // montar mapa de datas → eventos
-  // para cada escala, pegar dataInicio e distribuir pelos dias da semana
-  const toArr=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
-  const mapaEventos={}; // 'YYYY-MM-DD' → [{escalaId, nome, pessoas:[]}]
-
-  window._escalas.forEach(esc=>{
-    if(!esc.dataInicio) return;
-    // para cada dia da escala que tem freelas, calcular a data real
-    const DIAS_OFFSET={segunda:0,terca:1,quarta:2,quinta:3,sexta:4,sabado:5,domingo:6};
-    const baseDate=new Date(esc.dataInicio+'T12:00:00');
-    const baseDow=baseDate.getDay(); // 0=dom,1=seg...
-    const baseDowMap={0:6,1:0,2:1,3:2,4:3,5:4,6:5}; // converte para seg=0
-    const baseOffset=baseDowMap[baseDow];
-
-    DIAS.forEach(dia=>{
-      const confs=toArr(esc[dia]);
-      if(!confs.length) return;
-      // calcular data real deste dia
-      const diaOffset=DIAS_OFFSET[dia];
-      const diff=diaOffset-baseOffset;
-      const dataDia=new Date(baseDate);
-      dataDia.setDate(baseDate.getDate()+diff);
-      const key=dataDia.toISOString().slice(0,10);
-      if(!mapaEventos[key]) mapaEventos[key]=[];
-      mapaEventos[key].push({
-        escalaId:esc.id,
-        obs:esc.obs||'',
-        dia,
-        pessoas:confs,
-        dataInicio:esc.dataInicio
-      });
-    });
-  });
-
-  // gerar células do calendário
   const primeiroDia=new Date(calAno,calMes,1);
   const ultimoDia=new Date(calAno,calMes+1,0);
-  // ajustar início para segunda-feira
-  let startDow=primeiroDia.getDay(); // 0=dom
-  startDow=startDow===0?6:startDow-1; // segunda=0
+  let startDow=primeiroDia.getDay();
+  startDow=startDow===0?6:startDow-1;
 
   const cells=[];
-  // dias do mês anterior
-  for(let i=startDow-1;i>=0;i--){
-    const d=new Date(calAno,calMes,0-i);
-    cells.push({date:d,outroMes:true});
-  }
-  // dias do mês atual
-  for(let d=1;d<=ultimoDia.getDate();d++){
-    cells.push({date:new Date(calAno,calMes,d),outroMes:false});
-  }
-  // completar até múltiplo de 7
-  while(cells.length%7!==0){
-    const last=cells[cells.length-1].date;
-    const next=new Date(last);next.setDate(last.getDate()+1);
-    cells.push({date:next,outroMes:true});
-  }
+  for(let i=startDow-1;i>=0;i--){const d=new Date(calAno,calMes,0-i);cells.push({date:d,outroMes:true});}
+  for(let d=1;d<=ultimoDia.getDate();d++) cells.push({date:new Date(calAno,calMes,d),outroMes:false});
+  while(cells.length%7!==0){const last=cells[cells.length-1].date;const next=new Date(last);next.setDate(last.getDate()+1);cells.push({date:next,outroMes:true});}
 
   const hojeStr=hoje.toISOString().slice(0,10);
-
   const weekdays=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
   const isFds=[false,false,false,false,true,true,true];
 
@@ -961,8 +942,8 @@ function renderCalendario(){
     weekdays.map((w,i)=>`<div class="cal-weekday${isFds[i]?' fds':''}">${w}</div>`).join('')+
     cells.map(({date,outroMes})=>{
       const key=date.toISOString().slice(0,10);
-      const eventos=mapaEventos[key]||[];
-      const totalPessoas=eventos.reduce((s,e)=>s+e.pessoas.length,0);
+      const eventos=_mapaEventos[key]||[];
+      const totalP=eventos.reduce((s,e)=>s+e.confs.length,0);
       const isSel=diaSelecionado===key;
       const isHoje=key===hojeStr;
       let cls='cal-day';
@@ -971,17 +952,13 @@ function renderCalendario(){
       if(eventos.length) cls+=' tem-evento';
       if(isSel) cls+=' selecionado';
       const pills=eventos.slice(0,2).map(e=>`<div class="cal-evento-pill">${e.obs||fdsLabelShort(e)}</div>`).join('');
-      const countHtml=totalPessoas>0?`<div class="cal-pessoas-count">${totalPessoas} pessoa${totalPessoas>1?'s':''}</div>`:'';
+      const countHtml=totalP>0?`<div class="cal-pessoas-count">${totalP} pessoa${totalP>1?'s':''}</div>`:'';
       const onclick=outroMes?'':`onclick="abrirDia('${key}')"`;
-      return `<div class="${cls}" ${onclick}>
-        <div class="cal-day-num">${date.getDate()}</div>
-        ${pills}
-        ${countHtml}
-      </div>`;
+      return `<div class="${cls}" ${onclick}><div class="cal-day-num">${date.getDate()}</div>${pills}${countHtml}</div>`;
     }).join('');
 
-  // re-renderizar painel se um dia estiver selecionado
-  if(diaSelecionado) abrirDia(diaSelecionado,false);
+  // atualizar painel sem reabrir
+  if(diaSelecionado) renderPainel(diaSelecionado);
 }
 
 function fdsLabelShort(e){
@@ -997,44 +974,34 @@ function mudarMes(dir){
   renderCalendario();
 }
 
-function abrirDia(key, scroll=true){
+function abrirDia(key){
   diaSelecionado=key;
-  const toArr=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
+  const panel=document.getElementById('diaPanel');
+  const layout=document.getElementById('calLayout');
+  panel.style.display='flex';
+  panel.style.flexDirection='column';
+  layout.classList.add('com-painel');
+  if(!layout.contains(panel)) layout.appendChild(panel);
+  renderPainel(key);
+  // update selected cell visually without full re-render
+  document.querySelectorAll('.cal-day.selecionado').forEach(el=>el.classList.remove('selecionado'));
+  const cells=document.querySelectorAll('.cal-day:not(.outro-mes)');
+  cells.forEach(el=>{if(el.getAttribute('onclick')===`abrirDia('${key}')`) el.classList.add('selecionado');});
+}
 
-  // encontrar todos os eventos deste dia
-  const DIAS_OFFSET={segunda:0,terca:1,quarta:2,quinta:3,sexta:4,sabado:5,domingo:6};
-  const eventosNoDia=[];
-  window._escalas.forEach(esc=>{
-    if(!esc.dataInicio) return;
-    const baseDate=new Date(esc.dataInicio+'T12:00:00');
-    const baseDow=baseDate.getDay();
-    const baseDowMap={0:6,1:0,2:1,3:2,4:3,5:4,6:5};
-    const baseOffset=baseDowMap[baseDow];
-    DIAS.forEach(dia=>{
-      const confs=toArr(esc[dia]);
-      if(!confs.length) return;
-      const diaOffset=DIAS_OFFSET[dia];
-      const diff=diaOffset-baseOffset;
-      const dataDia=new Date(baseDate);
-      dataDia.setDate(baseDate.getDate()+diff);
-      const k=dataDia.toISOString().slice(0,10);
-      if(k===key) eventosNoDia.push({esc,dia,confs});
-    });
-  });
-
-  // formatar data
+function renderPainel(key){
+  if(!_mapaEventos) return;
+  const eventos=_mapaEventos[key]||[];
   const [y,m,d]=key.split('-');
   const dateObj=new Date(+y,+m-1,+d);
   const dataFmt=dateObj.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
-  const totalP=eventosNoDia.reduce((s,e)=>s+e.confs.length,0);
+  const totalP=eventos.reduce((s,e)=>s+e.confs.length,0);
 
-  const panel=document.getElementById('diaPanel');
-  const layout=document.getElementById('calLayout');
   document.getElementById('diaPanelTitle').textContent=dataFmt.charAt(0).toUpperCase()+dataFmt.slice(1);
   document.getElementById('diaPanelSub').textContent=totalP?`${totalP} pessoa${totalP>1?'s':''} escalada${totalP>1?'s':''}` : 'Nenhuma pessoa escalada';
 
   const body=document.getElementById('diaPanelBody');
-  if(!eventosNoDia.length){
+  if(!eventos.length){
     body.innerHTML=`
       <button class="dia-painel-add" onclick="openNovoFDSNoDia('${key}')">+ Criar evento neste dia</button>
       <div class="dia-painel-empty">
@@ -1046,14 +1013,14 @@ function abrirDia(key, scroll=true){
         <p>Nenhum freela escalado</p>
       </div>`;
   } else {
-    body.innerHTML=eventosNoDia.map(({esc,dia,confs})=>{
+    body.innerHTML=eventos.map(({esc,dia,confs})=>{
       const cards=confs.map(c=>{
         const f=window._freelancers.find(x=>x.id===c.fId)||{};
         const a=AREAS[f.area||c.area]||{};
         const initials=(f.nome||c.nome||'?').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
         const status=c.status||'pendente';
         return `<div class="pconf-card ${status} ac-${f.area||c.area}">
-          <div class="pconf-avatar-sm ac-${f.area||c.area}" style="background:${a.color||'var(--gold)'}">${initials}</div>
+          <div class="pconf-avatar-sm" style="background:${a.color||'var(--gold)'}">${initials}</div>
           <div class="pconf-info">
             <div class="pconf-nome">${f.nome||c.nome}</div>
             <div class="pconf-area">${a.label||c.area||'—'}</div>
@@ -1062,28 +1029,17 @@ function abrirDia(key, scroll=true){
         </div>`;
       }).join('');
       return `<div class="painel-evento-tag">📅 ${esc.obs||fdsLabel(esc)}</div>
-        <button class="dia-painel-add" onclick="openAddConf('${dia}');currentFDS='${esc.id}'">+ Adicionar neste dia</button>
+        <button class="dia-painel-add" onclick="currentFDS='${esc.id}';openAddConf('${dia}')">+ Adicionar neste dia</button>
         ${cards}`;
     }).join('<div style="height:12px"></div>');
   }
-
-  panel.style.display='flex';
-  panel.style.flexDirection='column';
-  layout.classList.add('panel-open');
-
-  // mover painel para dentro do layout se ainda não estiver
-  if(!layout.contains(panel)) layout.appendChild(panel);
-
-  // rerender calendário para atualizar seleção visual
-  renderCalendario();
-  if(scroll) panel.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function fecharPainel(){
   diaSelecionado=null;
   document.getElementById('diaPanel').style.display='none';
-  document.getElementById('calLayout').classList.remove('panel-open');
-  renderCalendario();
+  document.getElementById('calLayout').classList.remove('com-painel');
+  document.querySelectorAll('.cal-day.selecionado').forEach(el=>el.classList.remove('selecionado'));
 }
 
 function openNovoFDSNoDia(key){
@@ -1265,7 +1221,6 @@ async function confirmarSelecao(){
   const{db,ref,set}=window._fb;
   await set(ref(db,`escalas/${currentFDS}/${addingDia}`),confs);
   closeConf();
-  if(diaSelecionado) setTimeout(()=>abrirDia(diaSelecionado,false),400);
 }
 
 async function removerConf(dia,fId){
