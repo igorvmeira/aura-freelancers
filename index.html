@@ -1117,7 +1117,10 @@ function renderPainel(key){
       ).join('');
 
       const semFreelas=entradas.length===0||entradas.every(e=>e.confs.length===0);
-      return `<div class="painel-evento-tag">📅 ${esc.obs||fdsLabel(esc)}</div>
+      return `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div class="painel-evento-tag">📅 ${esc.obs||fdsLabel(esc)}</div>
+          <button onclick="excluirEvento('${esc.id}')" style="background:transparent;border:none;cursor:pointer;color:var(--text-dim);font-size:0.75rem;padding:4px 8px;border-radius:4px;font-family:'DM Sans',sans-serif;transition:color 0.2s" onmouseover="this.style.color='#a02020'" onmouseout="this.style.color='var(--text-dim)'">🗑 Excluir evento</button>
+        </div>
         <button class="dia-painel-add" onclick="currentFDS='${esc.id}';openAddConf('${diaKey}')">+ Adicionar freela neste dia</button>
         ${semFreelas?`<div style="font-size:.78rem;color:var(--text-dim);text-align:center;padding:12px 0">Nenhum freela ainda — clique acima para adicionar</div>`:cards}`;
     }).join('<div style="height:12px"></div>');
@@ -1131,6 +1134,19 @@ function fecharPainel(){
   document.querySelectorAll('.cal-day.selecionado').forEach(el=>el.classList.remove('selecionado'));
   const ov=document.getElementById('painelOverlay');
   if(ov) ov.style.display='none';
+}
+
+async function excluirEvento(escId){
+  if(!confirm('Excluir este evento? Os freelas escalados também serão removidos.')) return;
+  const{db,ref,remove}=window._fb;
+  await remove(ref(db,`escalas/${escId}`));
+  // se era o único evento do dia, fechar painel
+  const key=diaSelecionado;
+  if(key){
+    _mapaEventos=null;
+    const novosEventos=(buildMapaEventos()[key]||[]).filter(e=>!e.marcador||e.confs.length>0);
+    if(!novosEventos.length) fecharPainel();
+  }
 }
 
 function openNovoFDSNoDia(key){
