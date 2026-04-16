@@ -331,42 +331,49 @@ main{max-width:1360px;margin:0 auto;padding:40px 48px}
 .pag-filtro-btn.active{background:var(--card);color:var(--gold);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
 /* ══ PAGAMENTOS ══ */
 .pag-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}/* replaced */
-.pag-resumo{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
-.pag-resumo-card{background:var(--card);border:1px solid var(--border2);border-top:2px solid var(--ac,var(--gold));border-radius:8px;padding:16px 20px}
-.pag-resumo-n{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.6rem;color:var(--ac,var(--gold));line-height:1}
-.pag-resumo-l{font-size:0.72rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-dim);margin-top:5px}
+.pag-resumo{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.pag-resumo-card{background:var(--card);border:1px solid var(--border2);border-top:2px solid var(--ac,var(--gold));border-radius:8px;padding:12px 16px}
+.pag-resumo-n{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.3rem;color:var(--ac,var(--gold));line-height:1}
+.pag-resumo-l{font-size:0.65rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-dim);margin-top:4px}
 
-.pag-card{background:var(--card);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:12px;transition:box-shadow 0.2s}
-.pag-card.pago{opacity:0.6}
-.pag-card-top{display:flex;align-items:center;gap:14px;padding:18px 20px}
-.pag-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;color:#fff;flex-shrink:0;background:var(--ac,var(--gold))}
+.pag-card{background:var(--card);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:10px;transition:box-shadow 0.2s}
+.pag-card.pago{opacity:0.55}
+
+/* topo compacto: tudo numa linha */
+.pag-card-top{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.pag-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.75rem;color:#fff;flex-shrink:0;background:var(--ac,var(--gold))}
 .pag-info{flex:1;min-width:0}
-.pag-nome{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem}
-.pag-area{font-size:0.75rem;color:var(--text-dim);margin-top:2px}
+.pag-nome{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pag-area-row{display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap}
+.pag-area{font-size:0.68rem;color:var(--text-dim)}
 .pag-valor-wrap{text-align:right;flex-shrink:0}
-.pag-valor{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.3rem;color:var(--gold)}
-.pag-dias{font-size:0.7rem;color:var(--text-dim);margin-top:2px}
+.pag-valor{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.05rem;color:var(--gold);white-space:nowrap}
+.pag-dias{font-size:0.62rem;color:var(--text-dim);margin-top:1px;white-space:nowrap}
 
-.pag-card-body{padding:0 20px 14px;display:flex;flex-direction:column;gap:8px}
-.pag-pix-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:9px 12px}
-.pag-pix-label{font-size:0.7rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
-.pag-pix-val{font-size:0.88rem;color:var(--text);font-weight:500;flex:1;word-break:break-all}
-.pag-copy{background:transparent;border:1px solid var(--border2);border-radius:4px;padding:4px 10px;font-size:0.72rem;cursor:pointer;color:var(--text-dim);transition:all 0.2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+/* corpo compacto: pix + desconto em linha única */
+.pag-card-body{padding:0 16px 10px;display:flex;flex-direction:column;gap:6px}
+.pag-pix-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:7px 10px}
+.pag-pix-label{font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;min-width:24px}
+.pag-pix-val{font-size:0.82rem;color:var(--text);font-weight:500;flex:1;word-break:break-all}
+.pag-copy{background:transparent;border:1px solid var(--border2);border-radius:4px;padding:3px 9px;font-size:0.68rem;cursor:pointer;color:var(--text-dim);transition:all 0.2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .pag-copy:hover{border-color:var(--gold);color:var(--gold)}
 .pag-copy.copied{border-color:var(--verde);color:var(--verde)}
 
-.pag-card-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border2);background:var(--bg2)}
-.pag-status{display:flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:600}
+.pag-desc-row{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,#a02020 5%,transparent);border:1px solid rgba(160,32,32,0.18);border-radius:6px;padding:7px 10px}
+.pag-desc-input{background:transparent;border:none;outline:none;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.82rem;color:#a02020;width:80px;text-align:right}
+.pag-desc-input::placeholder{color:rgba(160,32,32,0.3);font-weight:400}
+
+/* rodapé compacto */
+.pag-card-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-top:1px solid var(--border2);background:var(--bg2)}
+.pag-status{display:flex;align-items:center;gap:5px;font-size:0.68rem;font-weight:600}
 .pag-status.pendente{color:#a02020}
 .pag-status.pago{color:#167a50}
-.pag-dias-list{display:flex;gap:6px;flex-wrap:wrap}
-.pag-dia-tag{font-size:0.68rem;font-weight:600;padding:2px 9px;border-radius:50px;background:color-mix(in srgb,var(--gold) 10%,transparent);color:var(--gold);border:1px solid rgba(176,125,42,0.25)}
-.btn-pagar{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.04em;text-transform:uppercase;padding:8px 18px;border:none;border-radius:6px;cursor:pointer;transition:all 0.2s;background:var(--verde);color:#fff}
+.pag-dias-list{display:flex;gap:5px;flex-wrap:wrap}
+.pag-dia-tag{font-size:0.62rem;font-weight:600;padding:2px 7px;border-radius:50px;background:color-mix(in srgb,var(--gold) 10%,transparent);color:var(--gold);border:1px solid rgba(176,125,42,0.22)}
+
+.btn-pagar{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.7rem;letter-spacing:0.04em;text-transform:uppercase;padding:7px 14px;border:none;border-radius:6px;cursor:pointer;transition:all 0.2s;background:var(--verde);color:#fff;white-space:nowrap}
 .btn-pagar:hover{background:#1e9060}
-.pag-desc-row{display:flex;align-items:center;gap:8px;background:color-mix(in srgb,#a02020 5%,transparent);border:1px solid rgba(160,32,32,0.2);border-radius:6px;padding:9px 12px;margin-top:6px}
-.pag-desc-input{background:transparent;border:none;outline:none;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem;color:#a02020;width:100px;text-align:right}
-.pag-desc-input::placeholder{color:rgba(160,32,32,0.35);font-weight:400}
-.btn-estornar{background:transparent;border:1px solid rgba(160,32,32,0.3);color:#a02020;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.72rem;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all 0.2s}
+.btn-estornar{background:transparent;border:1px solid rgba(160,32,32,0.3);color:#a02020;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.68rem;padding:5px 10px;border-radius:6px;cursor:pointer;transition:all 0.2s;white-space:nowrap}
 .btn-estornar:hover{background:rgba(160,32,32,0.08)}
 
 /* Modal confirmar pagamento */
@@ -1637,8 +1644,10 @@ window.renderPagamentos=function(){
         <div class="pag-avatar ac-${f.area||p.area}">${initials}</div>
         <div class="pag-info">
           <div class="pag-nome">${f.nome||p.nome}</div>
-          <div class="pag-area">${a.label||p.area}</div>
-          <div class="pag-dias-list" style="margin-top:6px">${diasHtml}</div>
+          <div class="pag-area-row">
+            <span class="pag-area">${a.label||p.area}</span>
+            <div class="pag-dias-list">${diasHtml}</div>
+          </div>
         </div>
         <div class="pag-valor-wrap">
           ${desc>0?`<div style="font-size:.72rem;color:var(--text-dim);text-decoration:line-through;text-align:right">${totalBrutoFmt}</div>`:''}
