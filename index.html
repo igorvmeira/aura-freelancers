@@ -1138,6 +1138,7 @@ function renderPainel(key){
           const a=AREAS[f.area||c.area]||{};
           const initials=(f.nome||c.nome||'?').split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase();
           const status=c.status||'pendente';
+          // usa 'dia' diretamente (segunda, terca, etc.) — sem recalcular
           return `<div class="pconf-card ${status} ac-${f.area||c.area}">
             <div class="pconf-avatar-sm" style="background:${a.color||'var(--gold)'}">${initials}</div>
             <div class="pconf-info">
@@ -1145,10 +1146,10 @@ function renderPainel(key){
               <div class="pconf-area">${a.label||c.area||'—'}</div>
             </div>
             <div class="pconf-actions">
-              ${status!=='confirmado'?`<button class="pconf-btn ok" onclick="setPainelStatus('${esc.id}','${diaKey}','${c.fId}','confirmado')" title="Confirmar">✓</button>`:''}
-              ${status!=='ausente'?`<button class="pconf-btn aus" onclick="setPainelStatus('${esc.id}','${diaKey}','${c.fId}','ausente')" title="Ausente">✗</button>`:''}
-              ${status!=='pendente'?`<button class="pconf-btn pend" onclick="setPainelStatus('${esc.id}','${diaKey}','${c.fId}','pendente')" title="Pendente">⏳</button>`:''}
-              <button class="pconf-btn del" onclick="removerDoPainel('${esc.id}','${diaKey}','${c.fId}')" title="Remover">🗑</button>
+              ${status!=='confirmado'?`<button class="pconf-btn ok" onclick="setPainelDia('${esc.id}','${dia}','${c.fId}','confirmado')" title="Confirmar presença">✓</button>`:''}
+              ${status!=='ausente'?`<button class="pconf-btn aus" onclick="setPainelDia('${esc.id}','${dia}','${c.fId}','ausente')" title="Marcar ausente">✗</button>`:''}
+              ${status!=='pendente'?`<button class="pconf-btn pend" onclick="setPainelDia('${esc.id}','${dia}','${c.fId}','pendente')" title="Voltar pendente">↩</button>`:''}
+              <button class="pconf-btn del" onclick="removerDia('${esc.id}','${dia}','${c.fId}')" title="Remover do dia">🗑</button>
             </div>
           </div>`;
         })
@@ -1165,48 +1166,22 @@ function renderPainel(key){
   }
 }
 
-async function setPainelStatus(escId,keyDia,fId,novoStatus){
+// Funções diretas — recebem o nome do dia (segunda, terca, etc.) diretamente
+async function setPainelDia(escId,dia,fId,novoStatus){
   const esc=window._escalas.find(e=>e.id===escId)||{};
-  const toArr=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
-  // descobrir qual dia corresponde à data keyDia
-  const baseDate=new Date(esc.dataInicio+'T12:00:00');
-  const baseDow=baseDate.getDay();
-  const baseDowMap={0:6,1:0,2:1,3:2,4:3,5:4,6:5};
-  const baseOffset2=baseDowMap[baseDow];
-  let diaKey=null;
-  DIAS.forEach(dia=>{
-    const diff=DIAS_OFFSET[dia]-baseOffset2;
-    const dataDia=new Date(baseDate);
-    dataDia.setDate(baseDate.getDate()+diff);
-    if(getISODate(dataDia)===keyDia) diaKey=dia;
-  });
-  if(!diaKey) return;
-  const confs=toArr(esc[diaKey]).map(c=>c.fId===fId?{...c,status:novoStatus}:c);
+  if(!esc||!dia) return;
+  const confs=toArr(esc[dia]).map(c=>c.fId===fId?{...c,status:novoStatus}:c);
   const{db,ref,set}=window._fb;
-  await set(ref(db,`escalas/${escId}/${diaKey}`),confs);
-  if(diaSelecionado) setTimeout(()=>renderPainel(diaSelecionado),300);
+  await set(ref(db,`escalas/${escId}/${dia}`),confs);
 }
 
-async function removerDoPainel(escId,keyDia,fId){
+async function removerDia(escId,dia,fId){
   if(!confirm('Remover este freela do dia?')) return;
   const esc=window._escalas.find(e=>e.id===escId)||{};
-  const toArr=v=>!v?[]:Array.isArray(v)?v:Object.values(v);
-  const baseDate=new Date(esc.dataInicio+'T12:00:00');
-  const baseDow=baseDate.getDay();
-  const baseDowMap={0:6,1:0,2:1,3:2,4:3,5:4,6:5};
-  const baseOffset2=baseDowMap[baseDow];
-  let diaKey=null;
-  DIAS.forEach(dia=>{
-    const diff=DIAS_OFFSET[dia]-baseOffset2;
-    const dataDia=new Date(baseDate);
-    dataDia.setDate(baseDate.getDate()+diff);
-    if(getISODate(dataDia)===keyDia) diaKey=dia;
-  });
-  if(!diaKey) return;
-  const confs=toArr(esc[diaKey]).filter(c=>c.fId!==fId);
+  if(!esc||!dia) return;
+  const confs=toArr(esc[dia]).filter(c=>c.fId!==fId);
   const{db,ref,set}=window._fb;
-  await set(ref(db,`escalas/${escId}/${diaKey}`),confs);
-  if(diaSelecionado) setTimeout(()=>renderPainel(diaSelecionado),300);
+  await set(ref(db,`escalas/${escId}/${dia}`),confs);
 }
 
 function fecharPainel(){
